@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/models/signin_model.dart';
+import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/homepage/account_information/account_information_page.dart';
 import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/homepage/calendar/calendar_controller.dart';
@@ -11,6 +12,8 @@ import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.d
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/schedule_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_controller/withdrawal_controller.dart';
+import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -26,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   final CalendarController _calendarController = Get.find();
   final ClockInAndOutController _clockInAndOutController = Get.find();
   final ShiftController _shiftController = Get.find();
-  // SignInModelUserVerified? userAuth;
-  // AuthController authController = Get.find();
+  final WithdrawalController _withdrawalController = Get.find();
+  final ItemsController _itemsController = Get.find();
   SignInUserModel? userAuth;
 
   int tab = 0;
@@ -38,6 +41,8 @@ class _HomePageState extends State<HomePage> {
     _calendarController.fetchRequestedTimeOffs();
     _clockInAndOutController.getClockInSchedule();
     _shiftController.fetchAvailableShift();
+    _withdrawalController.fetchAvailableLocatios();
+    _itemsController.fetchAvailableLocatios();
 
     // authController.userAuth.value;
   }
@@ -66,6 +71,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showWithdrawalSheet(context);
+        },
+        backgroundColor: const Color(0xFF00AD57),
+        child: Image.asset(
+          AppIcons.transfer,
+          height: 18,
+        ),
+      ),
       body: WillPopScope(
         onWillPop: _onWillPop,
         child: PageView(
@@ -201,6 +216,28 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void showWithdrawalSheet(BuildContext context) {
+    // final ValueCallback onValueSelected;
+    TextEditingController _emailController = TextEditingController();
+    TextEditingController _passwordController = TextEditingController();
+    // AuthController _authController = AuthController();
+    bool isVisible = false;
+
+    Size size = MediaQuery.of(context).size;
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: context.colorScheme.secondary,
+        context: context,
+        builder: (BuildContext context) {
+          return WithdrawalSheetSheet(
+              // emailController: _emailController,
+              // // isVisible: isVisible,
+              // passwordController: _passwordController,
+              // authController: _authController
+              );
+        });
   }
 }
 

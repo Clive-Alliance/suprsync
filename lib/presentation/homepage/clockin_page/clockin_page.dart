@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/date_utils.dart';
@@ -12,6 +13,7 @@ import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.d
 
 import 'package:suprsync/presentation/homepage/clockin_page/widgets/checkin_list_tile.dart';
 import 'package:suprsync/presentation/homepage/clockin_page/widgets/clockout_bottom_sheet.dart';
+import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_screen.dart';
 
 class ClockInPage extends StatefulWidget {
   const ClockInPage({super.key, required this.id});
@@ -62,6 +64,16 @@ class _ClockInPageState extends State<ClockInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showWithdrawalSheet(context);
+        },
+        backgroundColor: const Color(0xFF00AD57),
+        child: Image.asset(
+          AppIcons.transfer,
+          height: 18,
+        ),
+      ),
       body: SmartRefresher(
         onRefresh: _pullRefresh,
         enablePullDown: true,
@@ -463,6 +475,28 @@ class _ClockInPageState extends State<ClockInPage> {
         ),
       ),
     );
+  }
+
+  void showWithdrawalSheet(BuildContext context) {
+    // final ValueCallback onValueSelected;
+    TextEditingController _emailController = TextEditingController();
+    TextEditingController _passwordController = TextEditingController();
+    // AuthController _authController = AuthController();
+    bool isVisible = false;
+
+    Size size = MediaQuery.of(context).size;
+    showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: context.colorScheme.secondary,
+        context: context,
+        builder: (BuildContext context) {
+          return WithdrawalSheetSheet(
+              // emailController: _emailController,
+              // // isVisible: isVisible,
+              // passwordController: _passwordController,
+              // authController: _authController
+              );
+        });
   }
 }
 
