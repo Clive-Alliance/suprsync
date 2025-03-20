@@ -12,6 +12,7 @@ import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.d
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/schedule_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/homepage/transfer/transfer_screen.dart';
 import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_screen.dart';
 
@@ -98,6 +99,8 @@ class _HomePageState extends State<HomePage> {
             CalendarPage(
                 // userAuth: widget.userAuth
                 ),
+            TransferScreen(),
+
             AccountInformationPage(
                 // userAuth: widget.userAuth
                 ),
@@ -192,15 +195,15 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    "assets/icons/account_information .png",
-                    width: 17,
+                    AppIcons.trade,
+                    height: 18,
                     color: tab == 2
                         ? const Color(0xFF00AD57)
-                        : const Color(0xff7a7a7a),
+                        : const Color(0xffA5A5A5),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Account",
+                    "Transfer",
                     style: style(tab, 2),
                   ),
                 ],
@@ -210,6 +213,31 @@ class _HomePageState extends State<HomePage> {
                   tab = 2;
                 });
                 _pageController.jumpToPage(2); // Change the page
+              },
+            ),
+            GestureDetector(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/icons/account_information .png",
+                    width: 17,
+                    color: tab == 3
+                        ? const Color(0xFF00AD57)
+                        : const Color(0xff7a7a7a),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "Account",
+                    style: style(tab, 3),
+                  ),
+                ],
+              ),
+              onTap: () {
+                setState(() {
+                  tab = 3;
+                });
+                _pageController.jumpToPage(3); // Change the page
               },
             ),
           ],

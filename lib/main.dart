@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:suprsync/core/theme/app_theme.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
+import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
 import 'package:suprsync/presentation/homepage/account_information/account_controller.dart';
 
 import 'package:suprsync/presentation/homepage/auth/auth_page.dart';
@@ -22,6 +23,7 @@ void main() async {
   Get.put(CalendarController(), permanent: true);
   Get.put(WithdrawalController(), permanent: true);
   Get.put(ItemsController(), permanent: true);
+  Get.put(TransferController(), permanent: true);
 
   runApp(const MyApp());
 }
