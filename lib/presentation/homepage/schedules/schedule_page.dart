@@ -165,7 +165,6 @@ class _SchedulePageState extends State<SchedulePage> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                    print(_shiftController.shiftsModel);
 
                     // print(_shiftController.shiftsModel.first.start);
                     return _shiftController.shiftsModel.isEmpty

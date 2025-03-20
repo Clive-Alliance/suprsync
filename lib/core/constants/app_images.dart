@@ -31,4 +31,5 @@ class AppIcons {
   static String ss = 'assets/icons/Vector (14).png';
   static String ssLogo = 'assets/images/Group 5 (1).png';
   static String trade = 'assets/icons/trade.png';
+  static String transfer = 'assets/icons/frame.png';
 }

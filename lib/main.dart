@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:suprsync/core/theme/app_theme.dart';
+import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/homepage/account_information/account_controller.dart';
 
 import 'package:suprsync/presentation/homepage/auth/auth_page.dart';
@@ -8,6 +9,7 @@ import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.d
 import 'package:suprsync/presentation/homepage/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/homepage/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Add this
@@ -18,6 +20,8 @@ void main() async {
   Get.put(ShiftController(), permanent: true);
   Get.put(AccountController(), permanent: true);
   Get.put(CalendarController(), permanent: true);
+  Get.put(WithdrawalController(), permanent: true);
+  Get.put(ItemsController(), permanent: true);
 
   runApp(const MyApp());
 }
