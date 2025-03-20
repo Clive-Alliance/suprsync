@@ -6,6 +6,7 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
+import 'package:suprsync/core/utils/show_message.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 
@@ -121,7 +122,7 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                 items: List.generate(
                     _withdrawalController.locationsModel.length, (i) {
                   var location = _withdrawalController.locationsModel[i];
-                  print(location.address);
+
                   return SearchableDropdownMenuItem(
                       value: i,
                       label: location.name.toString(),
@@ -364,11 +365,30 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                 debugPrint('On save: $val');
               },
             ),
+            const SizedBox(
+              height: 18,
+            ),
+            Text(
+              'Selected Item',
+              style: context.textTheme.bodyMedium
+                  ?.copyWith(color: const Color(0xff000000)),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              color: Color(0xffF9F9F9),
+            ),
             const Expanded(
               child: SizedBox(),
             ),
             RectangularButton(
               onPress: () {
+                if (_withdrawalController.location.value.isEmpty ||
+                    _withdrawalController.inventoryItemId.value.isEmpty) {
+                  print('called here');
+                  showMessage('Please select a location', context);
+                } else {}
                 showWithdrawDialog();
               },
               buttonTitle: 'Withdraw',
@@ -436,8 +456,88 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                     flex: 2,
                     child: RectangularButton(
                       onPress: () async {
-                        await _withdrawalController.withdrawItem();
+                        await _withdrawalController
+                            .withdrawItem()
+                            .then((value) {
+                          value = 'Successful';
+                          Get.back();
+                        });
+                      },
+                      buttonTitle: 'Yes',
+                      textStyleColor: context.textTheme.labelLarge?.copyWith(
+                          fontSize: 14,
+                          color: Color(0xffffffff),
+                          fontWeight: FontWeight.w600),
+                      colour: Color(0xff00AD57),
+                      height: 50,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )));
+  }
+
+  showSuccessfulWithdrawal() {
+    Get.dialog(Dialog(
+        insetPadding: EdgeInsets.zero,
+        child: Container(
+          width: 349,
+          height: 196,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+          ),
+          // size.width,
+          padding: const EdgeInsets.only(
+              left: 16.0, right: 16.0, top: 20, bottom: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Text(
+                "Are you sure you want to\nwithdraw items",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff000000)),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TransparentRectangularButton(
+                      onPress: () {
                         Get.back();
+                        // Add your login logic here
+                      },
+                      buttonTitle: 'Cancel',
+                      textStyleColor: context.textTheme.labelLarge?.copyWith(
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.w700),
+                      colour: const Color(0xff000000),
+                      height: 50,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: RectangularButton(
+                      onPress: () async {
+                        await _withdrawalController
+                            .withdrawItem()
+                            .then((value) {
+                          value = 'Successful';
+                          Get.back();
+                        });
                       },
                       buttonTitle: 'Yes',
                       textStyleColor: context.textTheme.labelLarge?.copyWith(
