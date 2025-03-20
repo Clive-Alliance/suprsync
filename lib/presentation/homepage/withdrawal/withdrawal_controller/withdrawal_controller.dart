@@ -17,6 +17,8 @@ class WithdrawalController extends GetxController {
 
   Rx<String> measurementUnit = ''.obs;
   Rx<String> location = ''.obs;
+  Rx<String> toLocation = ''.obs;
+
   Rx<String> value = ''.obs;
 
   Future fetchAvailableLocatios() {
@@ -51,6 +53,7 @@ class WithdrawalController extends GetxController {
     )
         .then((value) async {
       Get.back();
+
       return value;
       // showSnackBar('time off requested successfully');
     }).catchError((error) {
