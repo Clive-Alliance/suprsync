@@ -10,6 +10,7 @@ import 'package:suprsync/presentation/homepage/calendar/calendar_controller.dart
 import 'package:suprsync/presentation/homepage/calendar/calendar_page.dart';
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_page.dart';
+import 'package:suprsync/presentation/homepage/inventory/inventory_screen.dart';
 import 'package:suprsync/presentation/homepage/schedules/schedule_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/homepage/transfer/transfer_screen.dart';
@@ -73,13 +74,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showWithdrawalSheet(context);
-        },
+        onPressed: () {},
         backgroundColor: const Color(0xFF00AD57),
         child: Image.asset(
-          AppIcons.transfer,
+          AppIcons.scanBarcode,
           height: 18,
+          color: const Color(0xffffffff),
         ),
       ),
       body: WillPopScope(
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
             CalendarPage(
                 // userAuth: widget.userAuth
                 ),
-            TransferScreen(),
+            InventoryScreen(),
 
             AccountInformationPage(
                 // userAuth: widget.userAuth
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Transfer",
+                    "Inventory",
                     style: style(tab, 2),
                   ),
                 ],
@@ -244,28 +244,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  void showWithdrawalSheet(BuildContext context) {
-    // final ValueCallback onValueSelected;
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    // AuthController _authController = AuthController();
-    bool isVisible = false;
-
-    Size size = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: context.colorScheme.secondary,
-        context: context,
-        builder: (BuildContext context) {
-          return WithdrawalSheetSheet(
-              // emailController: _emailController,
-              // // isVisible: isVisible,
-              // passwordController: _passwordController,
-              // authController: _authController
-              );
-        });
   }
 }
 
