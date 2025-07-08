@@ -33,4 +33,12 @@ class AppIcons {
   static String trade = 'assets/icons/trade.png';
   static String transfer = 'assets/icons/frame.png';
   static String scanBarcode = 'assets/icons/scan-barcode.png';
+  static String qrTransferScreen = 'assets/icons/iPhone 14 Pro - 9.png';
+  static String menu = 'assets/icons/Vector (21).png';
+  static String collins = 'assets/icons/collins.png';
+  static String notifications = 'assets/icons/notification.png';
+  static String shiftsCard = 'assets/icons/shifts_card_final_cropped.png';
+  static String inventory = 'assets/icons/filled_inventory.png';
+  static String filledClock = 'assets/icons/filled_clock.png';
+  static String request = 'assets/icons/requests.png';
 }

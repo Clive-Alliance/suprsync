@@ -56,15 +56,19 @@ class TransparentRectangularButton extends StatelessWidget {
       this.isLoading = false,
       this.textStyleColor,
       this.verticalPadding,
-      this.height});
+      this.horizontalPadding,
+      this.height,
+      this.width});
 
   final Color? colour;
   final String? buttonTitle;
   final void Function()? onPress;
   final TextStyle? textStyleColor;
   final double? height;
+  final double? width;
   final bool? isLoading;
   final double? verticalPadding;
+  final double? horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -76,17 +80,22 @@ class TransparentRectangularButton extends StatelessWidget {
         // padding: const EdgeInsets.symmetric(vertical: 8.0),
         margin: EdgeInsets.symmetric(vertical: verticalPadding ?? 20.0),
         height: height,
-        width: size.width,
+        width: width ?? size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3.0),
-            border: Border.all(color: Color(0xff707070), width: 1)),
+            border: Border.all(color: colour ?? Color(0xff707070), width: 1)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              buttonTitle!,
-              style: textStyleColor,
-              textAlign: TextAlign.center,
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding ?? 0,
+                  vertical: verticalPadding ?? 0),
+              child: Text(
+                buttonTitle!,
+                style: textStyleColor,
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),

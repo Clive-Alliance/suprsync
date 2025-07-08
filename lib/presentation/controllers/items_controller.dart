@@ -3,7 +3,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:suprsync/models/all_items_model.dart';
 import 'package:suprsync/services/item_services.dart';
 
-import '../homepage/auth/controller/auth_controller.dart';
+import '../dashboard_screen/auth/controller/auth_controller.dart';
 
 class ItemsController extends GetxController {
   ItemsServices _itemsServices = ItemsServices();

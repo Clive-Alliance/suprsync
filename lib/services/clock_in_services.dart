@@ -7,7 +7,7 @@ import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/models/checkin_schedule_model.dart';
 import 'package:suprsync/models/clockin_model.dart';
 import 'package:suprsync/models/error_model.dart';
-import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 
 class ClockinServices {
   final NetworkHelper _networkHelper = NetworkHelper();
