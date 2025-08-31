@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import 'package:suprsync/core/theme/app_theme.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
-import 'package:suprsync/presentation/homepage/account_information/account_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/account_information/account_controller.dart';
 
-import 'package:suprsync/presentation/homepage/auth/auth_page.dart';
-import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
-import 'package:suprsync/presentation/homepage/calendar/calendar_controller.dart';
-import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.dart';
-import 'package:suprsync/presentation/homepage/schedules/shedules_controller/available_shifts_controller.dart';
-import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_controller/withdrawal_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/auth/auth_page.dart';
+import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Add this
