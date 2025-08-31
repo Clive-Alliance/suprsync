@@ -4,8 +4,7 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/app_textfield.dart';
-import 'package:suprsync/core/utils/loader.dart';
-import 'package:suprsync/presentation/dashboard_screen/homepage.dart';
+
 import '../../../core/utils/show_snackbar.dart';
 import 'auth_page.dart';
 import 'controller/auth_controller.dart';
@@ -32,33 +31,33 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 33, horizontal: 20),
-        height: 556,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Image.asset(
-              AppIcons.ss,
-              height: 43.75,
-              width: 31.14,
-            ),
-            const SizedBox(
-              height: 28,
-            ),
-            Text(
-              'Welcome Back to SuprSync',
-              style: context.textTheme.headlineSmall?.copyWith(
-                  // color: context.colorScheme.onSurface, fontFamily: 'Freight'
-                  ),
-            ),
-            const SizedBox(height: 9),
-            Text('Enter your credentials to access your account.',
-                style: context.textTheme.bodySmall
-                    ?.copyWith(color: const Color(0xff6D6A6A))),
-            const SizedBox(
-              height: 35,
-            ),
-            SingleChildScrollView(
-              child: Column(
+        height: 550,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Image.asset(
+                AppIcons.ss,
+                height: 43.75,
+                width: 31.14,
+              ),
+              const SizedBox(
+                height: 28,
+              ),
+              Text(
+                'Welcome Back to SuprSync',
+                style: context.textTheme.headlineSmall?.copyWith(
+                    // color: context.colorScheme.onSurface, fontFamily: 'Freight'
+                    ),
+              ),
+              const SizedBox(height: 9),
+              Text('Enter your credentials to access your account.',
+                  style: context.textTheme.bodySmall
+                      ?.copyWith(color: const Color(0xff6D6A6A))),
+              const SizedBox(
+                height: 35,
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -92,58 +91,53 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                             isVisible = !isVisible;
                           });
                         },
-                        icon: Icon(Icons.remove_red_eye)),
+                        icon: const Icon(Icons.remove_red_eye)),
                     obscureText: !isVisible,
                     textEditingController: _passwordController,
                   ),
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Get.back();
-                    showForgotPasswordSheet(context);
-                  },
-                  child: const Text(
-                    'Forgot password?',
-                    style: TextStyle(
-                        color: Color(0xffD9694D),
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: 'Circular',
-                        decoration: TextDecoration.underline),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                      showForgotPasswordSheet(context);
+                    },
+                    child: const Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                          color: Color(0xffD9694D),
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Circular',
+                          decoration: TextDecoration.underline),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const Expanded(
-              child: SizedBox(),
-            ),
-            RectangularButton(
-              onPress: () {
-                _authController.signIn('aotegbeye', 'ayodejiotegbeye');
-
-                // Get.to(() => HomePage());
-
-                // if (_emailController.text.isEmpty ||
-                //     _passwordController.text.isEmpty) {
-                //   showSnackBar('Enter an email or password');
-                // } else if (_emailController.text.isNotEmpty &&
-                //     _passwordController.text.isNotEmpty) {
-                // _authController.signIn(
-                //     _emailController.text, _passwordController.text);
-                // }
-              },
-              buttonTitle: 'Login',
-              textStyleColor: context.textTheme.labelLarge
-                  ?.copyWith(color: context.colorScheme.secondary),
-              colour: context.colorScheme.tertiary,
-              height: 50,
-            )
-          ],
+                ],
+              ),
+              const SizedBox(height: 32),
+              RectangularButton(
+                onPress: () {
+                  if (_emailController.text.isEmpty ||
+                      _passwordController.text.isEmpty) {
+                    showSnackBar('Enter an email or password');
+                  } else if (_emailController.text.isNotEmpty &&
+                      _passwordController.text.isNotEmpty) {
+                    _authController.signIn(
+                        _emailController.text, _passwordController.text);
+                  }
+                },
+                buttonTitle: 'Login',
+                textStyleColor: context.textTheme.labelLarge
+                    ?.copyWith(color: context.colorScheme.secondary),
+                colour: context.colorScheme.tertiary,
+                height: 50,
+              )
+            ],
+          ),
         ),
       ),
     );

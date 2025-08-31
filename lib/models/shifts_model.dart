@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final shiftsModel = shiftsModelFromJson(jsonString);
-
 import 'dart:convert';
 
 List<ShiftsModel> shiftsModelFromJson(String str) => List<ShiftsModel>.from(

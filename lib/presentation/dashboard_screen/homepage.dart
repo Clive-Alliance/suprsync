@@ -15,9 +15,7 @@ import 'package:suprsync/presentation/dashboard_screen/inventory/inventory_scree
 import 'package:suprsync/presentation/dashboard_screen/qr_screen.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/schedule_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
-import 'package:suprsync/presentation/dashboard_screen/transfer/transfer_screen.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
-import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -42,16 +40,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _calendarController.fetchBlockedDates();
-    _calendarController.fetchRequestedTimeOffs();
-    _clockInAndOutController.getClockInSchedule();
-    _shiftController.fetchAvailableShift();
-    _withdrawalController.fetchAvailableLocatios();
+    // _calendarController.fetchBlockedDates();
+    // _calendarController.fetchRequestedTimeOffs();
+    _shiftController.fetchAllShifts();
+    _shiftController.fetchUserShifts();
+    _withdrawalController.fetchAvailableLocations();
     _withdrawalController.fetchMeasurementunit();
     _itemsController.fetchAvailableLocatios();
     _transferController.requestTransferItemsList();
-
-    // authController.userAuth.value;
+    _clockInAndOutController.getWifiName();
+    // _shiftController.loadClockedInShifts();
   }
 
   @override
@@ -210,7 +208,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Withdrawal",
+                    "Inventory",
                     style: style(tab, 3),
                   ),
                 ],

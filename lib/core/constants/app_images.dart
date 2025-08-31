@@ -37,8 +37,15 @@ class AppIcons {
   static String menu = 'assets/icons/Vector (21).png';
   static String collins = 'assets/icons/collins.png';
   static String notifications = 'assets/icons/notification.png';
-  static String shiftsCard = 'assets/icons/shifts_card_final_cropped.png';
+  static String shiftsCard = 'assets/images/shift_dashboard_card.png';
   static String inventory = 'assets/icons/filled_inventory.png';
   static String filledClock = 'assets/icons/filled_clock.png';
   static String request = 'assets/icons/requests.png';
+  static String location = 'assets/icons/location_icon.png';
+  static String scanBarcodeFilled = 'assets/icons/scan_barcode_filled.png';
+  static String clockFilled = 'assets/icons/filled_clock.png';
+  static String pause = 'assets/icons/Rectangle 22411.png';
+  static String play = 'assets/icons/Polygon 1.png';
+  static String clockedIn = 'assets/icons/clocked_in.png';
+  static String cannotClockin = 'assets/icons/cannot_clockin.png';
 }

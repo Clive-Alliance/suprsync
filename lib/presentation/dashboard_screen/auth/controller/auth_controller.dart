@@ -25,7 +25,7 @@ class AuthController extends GetxController {
   final Rx<String> email = ''.obs;
   final Rx<String> gender = ''.obs;
   final Rx<String> token = ''.obs;
-  final Rx<String> membershipId = ''.obs;
+  Rx<String> membershipId = ''.obs;
   Rx<bool> isEditMode = false.obs;
 
   // final Rx<String> firstName = ''.obs;

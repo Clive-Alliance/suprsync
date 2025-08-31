@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:suprsync/core/utils/error_handler.dart';
 import 'package:suprsync/core/utils/network_helper.dart';
 import 'package:suprsync/models/forgot_password.dart';
 import 'package:suprsync/models/signin_model.dart';
-
 import '../core/utils/conn.dart';
 import '../core/utils/shared_preferences.dart';
 
@@ -72,15 +70,14 @@ class Authentication {
       if (Platform.isAndroid) {
         deviceType = 'android';
         var build = await deviceInfoPlugin.androidInfo;
-        deviceUUID = build.id; // This is not a true UUID, but a device ID
+        deviceUUID = build.id;
       } else if (Platform.isIOS) {
         deviceType = 'ios';
 
         var data = await deviceInfoPlugin.iosInfo;
-        deviceUUID = data.identifierForVendor; // Unique identifier for iOS
+        deviceUUID = data.identifierForVendor;
       }
     } on PlatformException {
-      // Handle exception if device info cannot be retrieved
       print('Failed to get device UUID');
     }
 
