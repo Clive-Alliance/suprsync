@@ -6,95 +6,112 @@ import 'package:suprsync/models/transfer_request_mdel.dart';
 
 class TransferService {
   final NetworkHelper _networkHelper = NetworkHelper();
-  ErrorHandler errorHandler = ErrorHandler();
+  final ErrorHandler errorHandler = ErrorHandler();
 
-  Future getRequestTransferItems(from, to, token) async {
-    List<TransferRequestModel> transferRequestModel = [];
-    Map<String, String> headers;
-
-    ;
-    String url = '$prodUrl/inventory/get-transfer-request-items';
-
-    headers = {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token',
-    };
-
-    return _networkHelper
-        .get(
-      url,
-      headers: headers,
-    )
-        .then((dynamic value) async {
-      for (Map<String, dynamic> itm in value) {
-        final res = TransferRequestModel.fromJson(itm);
-        transferRequestModel.add(res);
+  Future<List<TransferRequestModel>> getRequestTransferItems(
+      String token) async {
+    try {
+      String url = '$prodUrl/inventory/get-transfer-request-items';
+      Map<String, String> headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      };
+      final dynamic response = await _networkHelper.get(url, headers: headers);
+      List<TransferRequestModel> transferRequestModel = [];
+      for (Map<String, dynamic> item in response) {
+        transferRequestModel.add(TransferRequestModel.fromJson(item));
       }
       return transferRequestModel;
-    }).catchError((onError) {
-      errorHandler.handleError(onError);
-    });
+    } catch (error) {
+      errorHandler.handleError(error);
+      return <TransferRequestModel>[];
+    }
   }
 
-  Future getLocationTransferItems(from, to, token) async {
-    List<TransferRequestModel> transferRequestModel = [];
-    Map<String, String> headers;
-    String url = to == ''
-        ? '$prodUrl/inventory/get-transfer-request-items?withdrawLocationId=$from'
-        : '$prodUrl/inventory/get-transfer-request-items?withdrawLocationId=$from&transferLocationId=$to';
-    headers = {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token',
-    };
+  Future<List<TransferRequestModel>> getLocationTransferItems(
+      String from, String to, String token) async {
+    try {
+      String url = to.isEmpty
+          ? '$prodUrl/inventory/get-transfer-request-items?withdrawLocationId=$from'
+          : '$prodUrl/inventory/get-transfer-request-items?withdrawLocationId=$from&transferLocationId=$to';
 
-    return _networkHelper
-        .get(
-      url,
-      headers: headers,
-    )
-        .then((dynamic value) async {
-      for (Map<String, dynamic> itm in value) {
-        final res = TransferRequestModel.fromJson(itm);
-        transferRequestModel.add(res);
+      Map<String, String> headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      };
+      final dynamic response = await _networkHelper.get(url, headers: headers);
+      List<TransferRequestModel> transferRequestModel = [];
+      for (Map<String, dynamic> item in response) {
+        transferRequestModel.add(TransferRequestModel.fromJson(item));
       }
       return transferRequestModel;
-    }).catchError((onError) {
-      errorHandler.handleError(onError);
-    });
+    } catch (error) {
+      errorHandler.handleError(error);
+      return <TransferRequestModel>[];
+    }
   }
 
-  Future stockUpItems(TransferRequestModel stockedItem, token) async {
-    Map<String, String> headers;
+  Future<dynamic> stockUpItems(
+      TransferRequestModel stockedItem, String token) async {
+    try {
+      String url = '$prodUrl/inventory/stock-up-transfer-item';
+      List<Item>? items = stockedItem.items;
+      Map<String, String> headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      };
+      final body = {
+        "transferItemsData": items!
+            .map((item) => {
+                  "transferItemId": item.id.toString(),
+                  "quantityReceived": item.quantityWithdrawn,
+                  "locationId": stockedItem.toLocation!.locationId.toString()
+                })
+            .toList()
+      };
+      final response =
+          await _networkHelper.post(url, headers: headers, body: body);
+      return response;
+    } catch (error) {
+      errorHandler.handleError(error);
+      showSnackBar(error.toString());
+      return null;
+    }
+  }
 
-    String url = '$prodUrl/inventory/stock-up-transfer-item';
-    List<Item>? items = stockedItem.items;
-    headers = {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      'Authorization': 'Bearer $token',
-    };
-    print('your items are $items');
-    final body = {
-      "transferItemsData": items!
-          .map((item) => {
-                "transferItemId": item.id.toString(),
-                "quantityReceived": item.quantityWithdrawn,
-                "locationId": stockedItem.toLocation!.locationId.toString()
-              })
-          .toList()
-    };
+  Future<bool> stockUpItemsWithSuccess(
+      TransferRequestModel stockedItem, String token) async {
+    try {
+      String url = '$prodUrl/inventory/stock-up-transfer-item';
+      List<Item>? items = stockedItem.items;
 
-    return await _networkHelper
-        .post(url, headers: headers, body: body)
-        .then((value) {
-      print(value);
-      return value;
-    }).catchError((onError) {
-      errorHandler.handleError(onError);
-      print('it is not $onError');
-      showSnackBar(onError.toString());
-    });
+      if (items == null || items.isEmpty) {
+        showSnackBar("No items to stock up");
+        return false;
+      }
+      Map<String, String> headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        'Authorization': 'Bearer $token',
+      };
+      final body = {
+        "transferItemsData": items
+            .map((item) => {
+                  "transferItemId": item.id.toString(),
+                  "quantityReceived": item.quantityWithdrawn,
+                  "locationId": stockedItem.toLocation!.locationId.toString()
+                })
+            .toList()
+      };
+      await _networkHelper.post(url, headers: headers, body: body);
+      return true; // Success
+    } catch (error) {
+      errorHandler.handleError(error);
+      showSnackBar(error.toString());
+      return false; // Failure
+    }
   }
 }
