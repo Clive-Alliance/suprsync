@@ -33,8 +33,8 @@ class _CalendarPageState extends State<CalendarPage> {
   Future<void> _pullRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
     showLoading();
-    _calendarController.fetchBlockedDates();
-    _calendarController.fetchRequestedTimeOffs();
+    // _calendarController.fetchBlockedDates();
+    // _calendarController.fetchRequestedTimeOffs();
     Get.back();
     _refreshController.refreshCompleted();
   }
@@ -46,8 +46,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SmartRefresher(
@@ -232,7 +230,8 @@ class _CalendarPageState extends State<CalendarPage> {
                                 children: [
                                   ListView.builder(
                                     shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: requestedTimeoffs.length,
                                     padding: const EdgeInsets.only(
                                         top: 0, bottom: 20),
@@ -302,7 +301,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                                     ),
                                                   ),
                                                   child: Text(
-                                                    '${startDate} - ${endDate}',
+                                                    '$startDate - $endDate',
                                                     style: context
                                                         .textTheme.bodySmall
                                                         ?.copyWith(

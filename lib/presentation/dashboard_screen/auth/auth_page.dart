@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
-import 'package:get/route_manager.dart';
 import 'package:suprsync/core/constants/app_images.dart';
 
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
@@ -14,7 +13,7 @@ import 'package:suprsync/presentation/dashboard_screen/auth/login_page.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
@@ -24,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       // _authController.loadDetails();
-      Get.to(() => LoginScreen());
+      Get.to(() => const LoginScreen());
     });
   }
 
@@ -50,24 +49,12 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 void showLoginBottomSheet(BuildContext context) {
-  // final ValueCallback onValueSelected;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  // AuthController _authController = AuthController();
-  bool isVisible = false;
-
-  Size size = MediaQuery.of(context).size;
   showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: context.colorScheme.secondary,
       context: context,
       builder: (BuildContext context) {
-        return LoginBottomSheet(
-            // emailController: _emailController,
-            // // isVisible: isVisible,
-            // passwordController: _passwordController,
-            // authController: _authController
-            );
+        return const LoginBottomSheet();
       });
 }
 
@@ -75,8 +62,8 @@ void showForgotPasswordSheet(BuildContext context) {
   // final ValueCallback onValueSelected;
   // Size size = MediaQuery.of(context).size;
   // AuthController _authController = Get.find();
-  TextEditingController _emailController = TextEditingController();
-  AuthController _authController = Get.find();
+  TextEditingController emailController = TextEditingController();
+  AuthController authController = Get.find();
   showModalBottomSheet(
       isScrollControlled: true,
       // enableDrag: true,
@@ -133,7 +120,8 @@ void showForgotPasswordSheet(BuildContext context) {
                 Text(
                   'Forgot your Password?',
                   style: context.textTheme.headlineSmall?.copyWith(
-                      color: Color(0xff000000), fontWeight: FontWeight.w600),
+                      color: const Color(0xff000000),
+                      fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(
                   height: 9,
@@ -162,16 +150,16 @@ void showForgotPasswordSheet(BuildContext context) {
                 ),
                 CustomAuthTextField(
                   hintText: 'Enter email address',
-                  textEditingController: _emailController,
+                  textEditingController: emailController,
                 ),
                 const Expanded(child: SizedBox()),
                 RectangularButton(
                   onPress: () {
-                    if (_emailController.text.isEmpty) {
+                    if (emailController.text.isEmpty) {
                       showSnackBar('Enter a valid Email');
                     } else {
                       showResetPasswordLink(context);
-                      _authController.forgotPassword(_emailController.text);
+                      authController.forgotPassword(emailController.text);
                     }
 
                     // } else {
@@ -180,7 +168,7 @@ void showForgotPasswordSheet(BuildContext context) {
                   },
                   buttonTitle: 'Recover password',
                   textStyleColor: context.textTheme.labelLarge
-                      ?.copyWith(color: Color(0xffffffff)),
+                      ?.copyWith(color: const Color(0xffffffff)),
                   colour: context.colorScheme.tertiary,
                   height: 50,
                 )
@@ -215,14 +203,14 @@ showResetPasswordLink(context) {
               // height: ,
               // height: 52,
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             const Text("Reset password link sent",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xff2C2C2C))),
+                    color: Color(0xff2C2C2C))),
             const SizedBox(
               height: 16,
             ),

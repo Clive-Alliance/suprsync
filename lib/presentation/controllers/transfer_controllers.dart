@@ -8,7 +8,7 @@ import 'package:suprsync/services/transfer_service.dart';
 import '../dashboard_screen/auth/controller/auth_controller.dart';
 
 class TransferController extends GetxController {
-  TransferService _transferService = TransferService();
+  final TransferService _transferService = TransferService();
 
   RxList<TransferRequestModel> transferRequestModel =
       <TransferRequestModel>[].obs;
@@ -118,12 +118,4 @@ class TransferController extends GetxController {
       showSnackBar(error);
     });
   }
-
-  // @override
-  // void onClose() {
-  //   // Clear values when controller is disposed
-  //   fromLocation.value = null;
-  //   toLocation.value = null;
-  //   super.onClose();
-  // }
 }

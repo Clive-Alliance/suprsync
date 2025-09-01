@@ -8,25 +8,20 @@ String formatTimeRange(String startTime, String endTime) {
   final startDateTime = inputFormat.parse(startTime);
   final endDateTime = inputFormat.parse(endTime);
 
-  // Define the output format (e.g., 3:00 PM)
   final outputFormat = DateFormat("h:mm a");
 
-  // Format the times
   final formattedStartTime = outputFormat.format(startDateTime);
   final formattedEndTime = outputFormat.format(endDateTime);
 
-  // Combine the formatted times
   return "$formattedStartTime - $formattedEndTime";
 }
 
 String formatDate(String dateString) {
-  // Parse the ISO date string
   DateTime dateTime = DateTime.parse(dateString);
 
-  // Extract the day, month, and year
   int day = dateTime.day;
-  String month = DateFormat('MMM').format(dateTime); // Abbreviated month
-  String year = DateFormat('yyyy').format(dateTime); // Full year
+  String month = DateFormat('MMM').format(dateTime);
+  String year = DateFormat('yyyy').format(dateTime);
 
   // Determine the ordinal suffix
   String suffix = getOrdinalSuffix(day);
@@ -122,4 +117,106 @@ String monthFormatter(String dateTimeString) {
   );
 
   return formattedDate;
+}
+
+class TimeUtils {
+  static String formatTo12Hour(String time24) {
+    if (time24.isEmpty) return '';
+
+    try {
+      // Parse the time (assuming format like "8:00" or "16:00")
+      final parts = time24.split(':');
+      if (parts.length != 2) return time24; // Return original if invalid format
+
+      int hour = int.parse(parts[0]);
+      int minute = int.parse(parts[1]);
+
+      String period = hour >= 12 ? 'PM' : 'AM';
+
+      // Convert 24-hour to 12-hour
+      if (hour == 0) {
+        hour = 12;
+      } else if (hour > 12) {
+        hour = hour - 12;
+      }
+
+      String minuteStr = minute.toString().padLeft(2, '0');
+
+      return '$hour:$minuteStr $period';
+    } catch (e) {
+      return time24;
+    }
+  }
+
+  static String getShiftStartText(DateTime start) {
+    final now = DateTime.now();
+    final diff = start.difference(now);
+
+    if (diff.isNegative) return "Shift started";
+    if (diff.inMinutes < 1) return "Starts now";
+    if (diff.inMinutes < 60) {
+      final mins = diff.inMinutes;
+      return "Starts in $mins minute${mins > 1 ? 's' : ''}";
+    }
+    if (diff.inHours < 24) {
+      final hours = diff.inHours;
+      return "Starts in $hours hour${hours > 1 ? 's' : ''}";
+    }
+    if (diff.inDays == 1) return "Starts tomorrow";
+    if (diff.inDays < 7) return "Starts in ${diff.inDays} days";
+    if (diff.inDays < 14) return "Starts in 1 week";
+    return "Starts in ${(diff.inDays / 7).round()} weeks";
+  }
+
+  static String formatTimeRange(String startTime, String endTime) {
+    final start = formatTo12Hour(startTime);
+    final end = formatTo12Hour(endTime);
+    return '$start - $end';
+  }
+
+  static String calculateHours(String startTime, String endTime) {
+    try {
+      final startParts = startTime.split(':');
+      final endParts = endTime.split(':');
+
+      if (startParts.length != 2 || endParts.length != 2) {
+        return "Invalid time";
+      }
+
+      final startHour = int.parse(startParts[0]);
+      final startMinute = int.parse(startParts[1]);
+      final endHour = int.parse(endParts[0]);
+      final endMinute = int.parse(endParts[1]);
+
+      final startTotalMinutes = startHour * 60 + startMinute;
+      final endTotalMinutes = endHour * 60 + endMinute;
+
+      int durationMinutes = endTotalMinutes - startTotalMinutes;
+
+      if (durationMinutes < 0) {
+        durationMinutes += 24 * 60;
+      }
+
+      final hours = durationMinutes ~/ 60;
+      final minutes = durationMinutes % 60;
+
+      if (minutes == 0) {
+        return "$hours hour${hours != 1 ? 's' : ''}";
+      } else {
+        return "$hours hour${hours != 1 ? 's' : ''} ${minutes} minute${minutes != 1 ? 's' : ''}";
+      }
+    } catch (e) {
+      return "Invalid time";
+    }
+  }
+
+  static DateTime? parseDateTime(String? dateTimeString) {
+    if (dateTimeString == null || dateTimeString.isEmpty) return null;
+
+    try {
+      return DateTime.parse(dateTimeString);
+    } catch (e) {
+      return null;
+    }
+  }
 }

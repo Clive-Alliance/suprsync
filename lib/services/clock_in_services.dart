@@ -23,7 +23,6 @@ class ClockinServices {
       'Authorization': 'Bearer $token',
     };
     body = {"type": type, "long": lng, "lat": lat, "wifiSSID": wifiName};
-    print('$body and $id');
     return await _networkHelper
         .post(url, headers: headers, body: body)
         .then((value) {

@@ -13,7 +13,7 @@ class AccountInformationPage extends StatelessWidget {
   const AccountInformationPage({super.key});
   @override
   Widget build(BuildContext context) {
-    AuthController _authController = Get.find();
+    final AuthController _authController = Get.find();
 
     return Scaffold(
       appBar: AppBar(
@@ -182,6 +182,5 @@ class AccountInformationPage extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }

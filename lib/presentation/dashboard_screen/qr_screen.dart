@@ -28,7 +28,6 @@ class _QrScannerState extends State<QrScanner> {
       setState(() {
         _scannedValue.text = scanData.code.toString();
       });
-      print('scanned value is ${_scannedValue.text}');
       _checkForMatchingBatch(_scannedValue.text);
     });
   }
@@ -41,16 +40,7 @@ class _QrScannerState extends State<QrScanner> {
 
     if (matchingItem != null) {
       showAlertDialog(matchingItem);
-    } else {
-      print("No matching batch ID found.");
-    }
-  }
-
-  @override
-  void initState() {
-    print('we printed this ${_transferController.transferRequestModel}');
-    // TODO: implement initState
-    super.initState();
+    } else {}
   }
 
   @override
@@ -91,20 +81,16 @@ class _QrScannerState extends State<QrScanner> {
       isDialogVisible = true; // Set dialog as visible
     });
 
-    controller?.pauseCamera();
+    controller.pauseCamera();
     Get.dialog(
-        barrierDismissible: false, // Prevent accidental dismiss
-
+        barrierDismissible: false,
         Dialog(
-            // Prevent accidental dismiss
-
             insetPadding: EdgeInsets.zero,
             child: TransferItemDialog(
               requestedTransferItem: requestedTransferItem,
             ))).then((_) {
-      // When dialog is closed, resume the scanner
       setState(() {
-        isDialogVisible = false; // Reset dialog state
+        isDialogVisible = false;
       });
       controller.resumeCamera();
     });

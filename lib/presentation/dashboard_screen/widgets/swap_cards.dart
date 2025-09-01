@@ -5,7 +5,6 @@ import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_page.dart';
-import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 
 class SwapCard extends StatelessWidget {
   const SwapCard(
@@ -146,12 +145,8 @@ class SwapCard extends StatelessWidget {
                     return IconButton(
                       icon: const Icon(Icons.more_vert),
                       onPressed: () {
-                        print(
-                            'show pop up ${_clockInController.shiftId.value}');
-                        // _showSwapShiftDialog(context);
                         _clockInController.shiftId.value = id;
-                        print(
-                            'show pop up 2${_clockInController.shiftId.value}');
+
                         _showPopupMenu(context,
                             _clockInController.shiftId.value, isOpenForSwap);
                       },
@@ -165,7 +160,6 @@ class SwapCard extends StatelessWidget {
                     return GestureDetector(
                       onTap: () {
                         _clockInController.swapId.value = id;
-                        print(_clockInController.swapId.value);
 
                         // Get.to(() => const SwapScreen());
                       },
@@ -197,25 +191,19 @@ class SwapCard extends StatelessWidget {
     final position = renderBox.localToGlobal(Offset.zero);
     final buttonWidth = renderBox.size.width;
     final buttonHeight = renderBox.size.height - 100;
-    print('your shift Id 2 is $shiftId');
-    final ShiftController _shiftsController = Get.find();
 
-    // Show the menu to the right of the button
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
-        position.dx +
-            buttonWidth, // Shift the menu to the right by button width
-        position.dy + buttonHeight, // Keep the same vertical position
-        0, // No space on the right side
-        0, // No space on the bottom side
+        position.dx + buttonWidth,
+        position.dy + buttonHeight,
+        0,
+        0,
       ),
       color: Colors.white,
       items: [
         PopupMenuItem(
           onTap: () {
-            print('your shift Id is $shiftId');
-
             Get.to(() => ClockInPage(id: shiftId));
           },
           value: 'Clock In',

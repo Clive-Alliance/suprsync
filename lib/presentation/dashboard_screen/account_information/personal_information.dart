@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
-import 'package:image_picker/image_picker.dart';
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
-import 'package:suprsync/presentation/dashboard_screen/account_information/account_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/account_information/widgets/account_textfield.dart';
-
 import '../auth/controller/auth_controller.dart';
-import 'widgets/custom_list_tile.dart';
 
 class PersonalInformation extends StatelessWidget {
   PersonalInformation({super.key});
 
   final AuthController _authController = Get.find();
-  final AccountController _accountController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +54,20 @@ class PersonalInformation extends StatelessWidget {
               return _authController.userDp.value.isEmpty
                   ? CircleAvatar(
                       radius: 38,
-                      backgroundColor: const Color(0xff00AD57),
-                      child: Text(
-                        "${_authController.firstName.substring(0, 1)} ${_authController.lastName.substring(0, 1)}",
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    )
+                      backgroundColor: Colors.grey[200],
+                      child: Icon(
+                        Icons.person,
+                        size: 60,
+                        color: Colors.grey,
+                      )
+                      // Text(
+                      //   "${_authController.firstName.substring(0, 1)} ${_authController.lastName.substring(0, 1)}",
+                      //   style: context.textTheme.bodyLarge?.copyWith(
+                      //     fontWeight: FontWeight.w600,
+                      //     color: Colors.black,
+                      //   ),
+                      // ),
+                      )
                   : CircleAvatar(
                       radius: 40,
                       backgroundColor: const Color(0xff59D1A0),

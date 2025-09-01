@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/utils/app_button.dart';
-import 'package:suprsync/core/utils/loader.dart';
 import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
 
@@ -15,7 +14,7 @@ class TransferItemDialog extends StatefulWidget {
 }
 
 class _TransferItemDialogState extends State<TransferItemDialog> {
-  TransferController _transferController = Get.find();
+  final TransferController _transferController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -149,7 +148,7 @@ class _TransferItemDialogState extends State<TransferItemDialog> {
                 height: 12,
               ),
               Container(
-                color: Color(0xffFAFAFA),
+                color: const Color(0xffFAFAFA),
                 child: Column(children: [
                   Container(
                     height: 38,
