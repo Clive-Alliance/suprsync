@@ -2,18 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
 import 'package:multi_dropdown/multi_dropdown.dart';
-import 'package:searchable_paginated_dropdown/searchable_paginated_dropdown.dart'
-    hide SearchableDropdown;
+import 'package:nb_utils/nb_utils.dart' hide ContextExtensions;
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
-import 'package:flutter_searchable_dropdown/flutter_searchable_dropdown.dart';
 import 'package:suprsync/core/utils/show_message.dart';
 import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/models/all_items_model.dart';
+import 'package:suprsync/models/location_model.dart' as loc;
 import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/widgets/multiple_dropdown_widget.dart.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
+
+import '../widgets/dropdown_picker.dart';
 
 class WithdrawalSheetSheet extends StatefulWidget {
   const WithdrawalSheetSheet({
@@ -25,6 +27,8 @@ class WithdrawalSheetSheet extends StatefulWidget {
 }
 
 class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
+  List<AllItemsModel> _preservedSelectedItems = [];
+
   bool isVisible = false;
   final Set<int> selectedItems = {}; // Track selected items
   String? selectedValue;
@@ -35,9 +39,26 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
   final ItemsController _itemsController = Get.find();
   AllItemsModel? selectedItem;
   final RxInt quantity = 0.obs;
+  List<int> selectedItemsMultiDialog = [];
+
+  List<DropdownMenuItem<AllItemsModel>> _customDroplist = [];
+  AllItemsModel? _selectedCustom;
+  List<int> selectedItemsMultiCustomDisplayDialog = [];
 
   @override
   void initState() {
+    if (_itemsController.allItemsModel.isNotEmpty) {
+      _itemsController.allItemsModel.forEach((element) {
+        _customDroplist.add(DropdownMenuItem<AllItemsModel>(
+          value: element,
+          child: Text(
+            element.name.toString(),
+            style: const TextStyle(color: Colors.black),
+          ),
+        ));
+      });
+    }
+
     super.initState();
   }
 
@@ -45,761 +66,689 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: MediaQuery.of(context).viewInsets,
-        child: Container(
-          // color: Colors.black,
-          margin: const EdgeInsets.symmetric(vertical: 33, horizontal: 20),
-          // height: size.height * 0.88,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Image.asset(
-                      'assets/icons/arrow-left.png',
-                      width: 16,
-                      // height: 18,
-                    ),
+      body: Container(
+        margin: const EdgeInsets.symmetric(vertical: 33, horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    _withdrawalController.selectedLocation.value = null;
+                    _withdrawalController.selectedItems.clear();
+                    _withdrawalController.selectedWithdrawals.clear();
+                    Get.back();
+                  },
+                  child: Image.asset(
+                    'assets/icons/arrow-left.png',
+                    width: 16,
+                    // height: 18,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'Back',
+                  style: context.textTheme.bodySmall?.copyWith(
+                      color: const Color(0xff727272),
+                      fontWeight: FontWeight.w500),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 28,
+            ),
+            Text(
+              'Withdraw Items',
+              style: context.textTheme.headlineSmall?.copyWith(),
+            ),
+            const SizedBox(height: 9),
+            Text('Withdraw items seamlessly',
+                style: context.textTheme.bodyMedium
+                    ?.copyWith(color: const Color(0xff616161))),
+            const SizedBox(
+              height: 28,
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                  Text(
+                    'Location',
+                    style: context.textTheme.bodyMedium
+                        ?.copyWith(color: const Color(0xff000000)),
                   ),
                   const SizedBox(
-                    width: 10,
+                    height: 10,
+                  ),
+                  Obx(() {
+                    return SearchableDropdownField<loc.LocationModel>(
+                      title: '',
+                      hintText: 'Select location',
+                      items: _withdrawalController.locationsModel,
+                      displayText: (location) => location.name ?? '',
+                      getValue: (location) => location.id?.toString() ?? '',
+                      selectedItem:
+                          _withdrawalController.selectedLocation.value,
+                      onChanged: (location) {
+                        _withdrawalController.selectedLocation.value = location;
+
+                        // if (location != null) {
+                        //   _withdrawalController.location.value =
+                        //       location.id.toString();
+                        //   print(_withdrawalController.location.value);
+                        // }
+                      },
+                      validator: (val) =>
+                          val == null ? 'Can\'t be empty' : null,
+                    );
+                  }),
+                  const SizedBox(
+                    height: 18,
                   ),
                   Text(
-                    'Back',
-                    style: context.textTheme.bodySmall?.copyWith(
-                        color: const Color(0xff727272),
-                        fontWeight: FontWeight.w500),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 28,
-              ),
-              Text(
-                'Withdraw Items',
-                style: context.textTheme.headlineSmall?.copyWith(),
-              ),
-              const SizedBox(height: 9),
-              Text('Withdraw items seamlessly',
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: const Color(0xff616161))),
-              const SizedBox(
-                height: 28,
-              ),
-              Text(
-                'Location',
-                style: context.textTheme.bodyMedium
-                    ?.copyWith(color: const Color(0xff000000)),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Obx(() {
-                if (_withdrawalController.isLoading.value) {}
-                return SearchableDropdownFormField<int>(
-                  // margin,
-                  // searchIconWidget:
-                  //     Image.asset('assets/icons/element-4.png', height: 18),
-                  backgroundDecoration: (child) => Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: Color(0xffdedede))),
-                    margin: EdgeInsets.zero,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: child,
-                    ),
-                  ),
-                  // style: context.textTheme.bodyMedium
-                  //     ?.copyWith(color: Color(0xff848484)),
-                  hintText: Text(
-                    'Select location',
+                    'Item',
                     style: context.textTheme.bodyMedium
-                        ?.copyWith(color: Color(0xffC4C2C2)),
+                        ?.copyWith(color: const Color(0xff000000)),
                   ),
-                  margin: const EdgeInsets.all(0),
-                  dialogOffset: 05,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  MultipleDropdown.multiple(
+                    key: ValueKey(
+                        'item_selector_${_withdrawalController.selectedItems.length}'),
+                    items: _customDroplist,
+                    selectedItems: selectedItemsMultiCustomDisplayDialog,
+                    iconSize: 0,
+                    style: context.textTheme.bodySmall
+                        ?.copyWith(color: const Color(0xffC4C2C2)),
+                    hint: "Select item",
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCustom = value;
+                      });
+                      // _withdrawalController.selectedItems.value = value;
+                    },
 
-                  items: List.generate(
-                      _withdrawalController.locationsModel.length, (i) {
-                    var location = _withdrawalController.locationsModel[i];
+                    icon: const Icon(Icons.arrow_drop_down),
+                    fieldDecoration: BoxDecoration(
+                      color: Colors.white,
+                      border:
+                          Border.all(color: Colors.grey.shade400, width: 0.5),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    menuBackgroundColor: Colors.white,
+                    displayClearIcon: false,
+                    // doneButton: null,
+                    closeButton: null,
+                    dropDownDialogPadding: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    searchInputDecoration: InputDecoration(
+                      isDense: true, // makes the height smaller
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 0, // keeps prefixIcon aligned
+                        vertical: 12, // adjusts vertical centering
+                      ), // 👈 removes all padding
 
-                    return SearchableDropdownMenuItem(
-                        value: i,
-                        label: location.name.toString(),
-                        child: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter stateSetter) {
-                          return GestureDetector(
-                            behavior: HitTestBehavior
-                                .translucent, // Ensures tap is detected even on empty areas
-                            onTap: () {
-                              stateSetter(() {
-                                print(
-                                    'not sure about value${_withdrawalController.location.value}');
-                                isVisible = !isVisible;
-                                _withdrawalController.location.value =
-                                    location.id.toString();
-                              });
-                            },
-                            child: Container(
-                              height: 28,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 18,
-                                    height: 18,
-                                    // margin: const EdgeInsets.only(bottom: 10),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: isVisible
-                                            ? Colors.green
-                                            : Colors.grey,
-                                        width: 2,
-                                      ),
-                                      color: isVisible
-                                          ? Colors.green
-                                          : Colors.transparent,
-                                    ),
-                                    child: isVisible
-                                        ? const Icon(Icons.check,
-                                            size: 16, color: Colors.white)
-                                        : null,
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(location.name.toString(),
-                                      style: context.textTheme.bodyMedium
-                                          ?.copyWith(
-                                              color: const Color(0xff535353))),
-                                ],
+                      filled: true,
+                      fillColor: const Color(0xffF5F5F5), // background color
+                      hintText: "Search", // 👈 customize hint text here
+                      hintStyle: context.textTheme.bodyMedium,
+
+                      //         ?.copyWith(color: Color(0xffC4C2C2)),
+                      prefixIcon: Container(
+                        padding: const EdgeInsets.all(
+                            12), // Add padding around the icon
+                        child: Image.asset(
+                          'assets/icons/element-4.png',
+                          height: 14,
+                          width: 14, // Also specify width
+                          fit: BoxFit.contain, // Ensures proper scaling
+                        ),
+                      ),
+                      border: InputBorder.none, // 🚀 no border
+                      enabledBorder: InputBorder.none, // 🚀 no border
+                      focusedBorder: InputBorder.none,
+                    ),
+                    searchFn: (String keyword,
+                        List<DropdownMenuItem<AllItemsModel>> items) {
+                      List<int> _ret = [];
+                      if (items.length > 0 && keyword.isNotEmpty) {
+                        int i = 0;
+                        items.forEach((item) {
+                          if (!_ret.contains(i) &&
+                              (item.value!.name
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(keyword.toLowerCase()))) {
+                            _ret.add(i);
+                          }
+                          i++;
+                        });
+                      }
+                      if (keyword.isEmpty) {
+                        _ret = Iterable<int>.generate(items.length).toList();
+                      }
+                      return (_ret);
+                    },
+                    isExpanded: true,
+
+                    doneButton: null,
+                    autofocus: false,
+
+                    // underline: SizedBox(),
+                    dialogBox: false,
+                    menuConstraints:
+                        const BoxConstraints(maxHeight: 320, maxWidth: 600),
+                    // _withdrawalController.updateSelectedItems(value);
+                    selectedValueWidgetFn: (AllItemsModel item) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _withdrawalController.toggleItemSelection(item);
+                      });
+                      return const Text('');
+                    },
+
+                    // selectedAggregateWidgetFn: (List<Widget> list) {
+                    //   return Wrap(children: list);
+                    // },
+                    displayItem: (DropdownMenuItem<AllItemsModel> item,
+                        bool selected, Function updateParent) {
+                      AllItemsModel value = item.value as AllItemsModel;
+
+                      return SizedBox(
+                        height: 50,
+                        child: ListTile(
+                          contentPadding:
+                              EdgeInsets.zero, // ✅ removes extra bottom space
+                          // visualDensity: const VisualDensity(vertical: -1),
+
+                          leading: Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? const Color(0xff00AD57)
+                                  : Colors.transparent,
+                              border: Border.all(
+                                color: selected
+                                    ? const Color(0xff00AD57)
+                                    : const Color(0xffCECECE),
+                                width: 0.8,
                               ),
+                              // borderRadius: BorderRadius.circular(4),
                             ),
-                          );
+                            child: selected
+                                ? const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 14,
+                                  )
+                                : null,
+                          ),
 
-                          // CheckboxListTile(
-                          //   dense: false,
-                          //   visualDensity: const VisualDensity(
-                          //       horizontal: -4, vertical: -2),
-                          //   contentPadding: EdgeInsets.zero,
-                          //   value: isVisible,
-                          //   onChanged: (value) {
-                          //     stateSetter(() {
-                          //       // reverse the value
-                          //       print(
-                          //           'not sure about value${_withdrawalController.location.value}');
-                          //       isVisible = !isVisible;
-                          //       _withdrawalController.location.value =
-                          //           location.id.toString();
-                          //       print(
-                          //           'not sure about value 2 ${_withdrawalController.location.value}');
-                          //     });
-                          //   },
-                          //   title:
-                          //   controlAffinity: ListTileControlAffinity
-                          //       .leading, // Moves the checkbox to the left
-                          // );
-                        }));
-                  }),
-                  validator: (val) {
-                    if (val == null) return 'Can\'t be empty';
-                    return null;
-                  },
-                  onSaved: (val) {
-                    debugPrint('On save: $val');
-                  },
-                );
-              }),
-              const SizedBox(
-                height: 18,
-              ),
-              Text(
-                'Item',
-                style: context.textTheme.bodyMedium
-                    ?.copyWith(color: const Color(0xff000000)),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SearchableDropdownFormField<int>(
-                initialValue:
-                    selectedItems.isNotEmpty ? selectedItems.first : null,
-
-                // margin,
-                // searchIconWidget:
-                //     Image.asset('assets/icons/element-4.png', height: 18),
-                backgroundDecoration: (child) => Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Color(0xffdedede))),
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: child,
-                  ),
-                ),
-                // style: context.textTheme.bodyMedium
-                //     ?.copyWith(color: Color(0xff848484)),
-                hintText: Text(
-                  'Select item',
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: Color(0xffC4C2C2)),
-                ),
-                margin: const EdgeInsets.all(0),
-                dialogOffset: 05,
-                items: List.generate(
-                  _itemsController.allItemsModel.length,
-                  (i) {
-                    var allItems = _itemsController.allItemsModel[i];
-                    return SearchableDropdownMenuItem(
-                        value: i,
-                        label: allItems.name.toString(),
-                        child: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter stateSetter) {
-                          return GestureDetector(
-                            onTap: () {
-                              stateSetter(() {
-                                isVisible = !isVisible;
-                                bool newValue = !selectedItems.contains(i);
-                                if (newValue) {
-                                  selectedItems.add(i);
-                                } else {
-                                  selectedItems.remove(i);
-                                }
-
-                                // Update controller values
-                                _withdrawalController.inventoryItemId.value =
-                                    allItems.id.toString();
-                                _withdrawalController.selectedValue.value =
-                                    allItems;
-                                print(
-                                    'let\'s see here too ${_withdrawalController.inventoryItemId.value}');
-                              });
-                            },
-                            child: Container(
-                              height: 60,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    // behavior: ,
-                                    onTap: () {
-                                      setState(() {
-                                        if (selectedItems.contains(i)) {
-                                          selectedItems.remove(i);
-                                        } else {
-                                          selectedItems.add(i);
-                                        }
-                                        isVisible = !isVisible;
-
-                                        _withdrawalController.inventoryItemId
-                                            .value = allItems.id.toString();
-                                        _withdrawalController
-                                            .selectedValue.value = allItems;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: 24,
-                                      height: 24,
-                                      margin: const EdgeInsets.only(bottom: 10),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.rectangle,
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: isVisible
-                                              ? Colors.green
-                                              : Colors.grey,
-                                          width: 2,
-                                        ),
-                                        color: isVisible
-                                            ? Colors.green
-                                            : Colors.transparent,
-                                      ),
-                                      child: isVisible
-                                          ? const Icon(Icons.check,
-                                              size: 16, color: Colors.white)
-                                          : null,
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                value.name.toString().capitalizeEachWord(),
+                                style: context.textTheme.bodyMedium
+                                    ?.copyWith(color: const Color(0xff535353)),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "Ref No: ",
+                                      style: context.textTheme.bodySmall
+                                          ?.copyWith(color: Colors.black),
                                     ),
+                                    TextSpan(
+                                      text: value.referenceNumber.toString(),
+                                      style: context.textTheme.bodySmall
+                                          ?.copyWith(color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ],
+                          ),
+
+                          trailing: SizedBox(
+                            width: 150,
+                            // height: 100,
+
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  value.group!.name.toString(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.textTheme.bodyMedium,
+                                ),
+                                // const SizedBox(height: 4),
+                                RichText(
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1, // limit to one line with ...
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Manufacturer: ",
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(color: Colors.black),
+                                      ),
+                                      TextSpan(
+                                        text: value.inventoryManufacturer?.name
+                                            .toString(),
+                                        style: context.textTheme.bodySmall
+                                            ?.copyWith(
+                                          color: const Color(0xff000000),
+                                          overflow: TextOverflow
+                                              .ellipsis, // Ellipsis inside TextSpan
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(
-                                      width:
-                                          8), // Space between checkbox and text
-                                  Expanded(
+                                ),
+                              ],
+                            ),
+                          ),
+                          horizontalTitleGap: 0,
+                          dense: true,
+                          // visualDensity: VisualDensity.compact,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  Obx(() {
+                    return Visibility(
+                      visible: _withdrawalController.selectedItems.isNotEmpty,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Selected Item',
+                            style: context.textTheme.bodyMedium?.copyWith(
+                              color: const Color(0xff000000),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // ListView to display all selected items
+                          SizedBox(
+                            height: 300, // Set appropriate height
+                            child: Obx(() {
+                              final selectedItems =
+                                  _withdrawalController.selectedItems;
+
+                              return ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: selectedItems.length,
+                                itemBuilder: (context, index) {
+                                  final selectedItem = selectedItems[index];
+                                  final withdrawal = _withdrawalController
+                                      .getWithdrawalForItem(
+                                          selectedItem.id.toString());
+
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    padding: const EdgeInsets.only(
+                                        left: 12,
+                                        right: 12,
+                                        top: 13,
+                                        bottom: 13),
+                                    color: const Color(0xffF9F9F9),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          allItems.name.toString(),
-                                          style: context.textTheme.bodyMedium
-                                              ?.copyWith(
-                                                  color:
-                                                      const Color(0xff535353)),
-                                        ),
-                                        RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "Ref No: ",
-                                                style: context
-                                                    .textTheme.bodySmall
-                                                    ?.copyWith(
-                                                        color: Colors.black),
-                                              ),
-                                              TextSpan(
-                                                text: allItems.referenceNumber
-                                                    .toString(),
-                                                style: context
-                                                    .textTheme.bodySmall
-                                                    ?.copyWith(
-                                                        color: Colors.black),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                      width:
-                                          8), // Space between text and right-side content
-                                  SizedBox(
-                                    width: 150,
-                                    height: 80,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        SizedBox(
-                                          width: 100,
-                                          child: Text(
-                                            allItems.group!.name.toString(),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: context.textTheme.bodyMedium,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        SizedBox(
-                                          width: 150,
-                                          child: RichText(
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "Manufacturer: ",
-                                                  style: context
-                                                      .textTheme.bodySmall
-                                                      ?.copyWith(
-                                                          color: Colors.black),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        })
-                        // return CheckboxListTile(
-                        //   dense: false,
-                        //   visualDensity:
-                        //       const VisualDensity(horizontal: -4, vertical: -2),
-                        //   contentPadding: EdgeInsets.zero,
-                        //   value: selectedItems.contains(i), // Check if selected
-                        //   onChanged: (bool? checked) {
-                        //     setState(() {
-                        //       isVisible = !isVisible;
-                        //       _withdrawalController.inventoryItemId.value =
-                        //           allItems.id.toString();
-                        //       _withdrawalController.selectedValue.value =
-                        //           allItems;
-
-                        //       if (checked == true) {
-                        //         selectedItems.add(i);
-                        //       } else {
-                        //         selectedItems.remove(i);
-                        //       }
-                        //     });
-                        //   },
-                        //   subtitle: RichText(
-                        //     text: TextSpan(
-                        //       children: [
-                        //         TextSpan(
-                        //           text: "Ref No: ",
-                        //           style: context.textTheme.bodySmall
-                        //               ?.copyWith(color: Colors.black),
-                        //         ),
-                        //         TextSpan(
-                        //           text: allItems.referenceNumber.toString(),
-                        //           style: context.textTheme.bodySmall
-                        //               ?.copyWith(color: Colors.black),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        //   secondary: SizedBox(
-                        //     width: 150,
-                        //     height: 80,
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment
-                        //           .end, // Align text to the left
-                        //       children: [
-                        //         SizedBox(
-                        //           width:
-                        //               100, // Ensure text does not exceed this width
-                        //           child: Text(
-                        //             allItems.group!.name.toString(),
-                        //             maxLines: 1, // Prevents overflow
-                        //             overflow:
-                        //                 TextOverflow.ellipsis, // Show "..."
-                        //             style: context.textTheme.bodyMedium,
-                        //           ),
-                        //         ),
-                        //         const SizedBox(height: 4), // Add spacing
-                        //         SizedBox(
-                        //           width: 150,
-                        //           child: RichText(
-                        //             overflow: TextOverflow
-                        //                 .ellipsis, // Ensure RichText also respects boundaries
-                        //             maxLines:
-                        //                 2, // Allow up to 2 lines before ellipses
-                        //             text: TextSpan(
-                        //               children: [
-                        //                 TextSpan(
-                        //                   text: "Manufacturer: ",
-                        //                   style: context.textTheme.bodySmall
-                        //                       ?.copyWith(color: Colors.black),
-                        //                 ),
-                        //                 // TextSpan(
-                        //                 //   text: allItems
-                        //                 //       .inventoryManufacturer?.name
-                        //                 //       .toString(),
-                        //                 //   style: context.textTheme.bodySmall
-                        //                 //       ?.copyWith(
-                        //                 //     color: Colors.red,
-                        //                 //     overflow: TextOverflow
-                        //                 //         .ellipsis, // Ellipsis inside TextSpan
-                        //                 //   ),
-                        //                 // ),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-
-                        //   title: Text(allItems.name.toString(),
-                        //       style: context.textTheme.bodyMedium
-                        //           ?.copyWith(color: const Color(0xff535353))),
-                        //   controlAffinity: ListTileControlAffinity
-                        //       .leading, // Moves the checkbox to the left
-                        // );
-
-                        );
-                  },
-                ),
-
-                validator: (val) {
-                  if (val == null) return 'Can\'t be empty';
-                  return null;
-                },
-                onSaved: (val) {
-                  debugPrint('On save: $val');
-                },
-              ),
-              const SizedBox(
-                height: 18,
-              ),
-              Obx(() {
-                if (_withdrawalController.selectedValue.value == null) {
-                  return const SizedBox(); // Show nothing if no item is selected
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Selected Item',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xff000000),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                        padding: EdgeInsets.only(
-                            left: 12, right: 12, top: 13, bottom: 13),
-                        color: Color(0xffF9F9F9),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          _withdrawalController
-                                              .selectedValue.value!.name
-                                              .toString(),
-                                          style: context.textTheme.bodyMedium
-                                              ?.copyWith(
-                                            color: const Color(0xff000000),
-                                            fontWeight: FontWeight.w500,
-                                          )),
-                                      RichText(
-                                        text: TextSpan(
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            TextSpan(
-                                              text: "Ref No: ",
-                                              style: context
-                                                  .textTheme.bodyMedium
-                                                  ?.copyWith(
-                                                      color: Colors.black),
+                                            // Left side - Item details
+
+                                            Expanded(
+                                              flex: 2,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    selectedItem.name!
+                                                        .validate()
+                                                        .capitalizeEachWord(),
+                                                    style: context
+                                                        .textTheme.labelLarge
+                                                        ?.copyWith(
+                                                            color: const Color(
+                                                                0xff000000)),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "Ref No: ",
+                                                          style: context
+                                                              .textTheme
+                                                              .labelSmall
+                                                              ?.copyWith(
+                                                                  color: const Color(
+                                                                      0xff535353)),
+                                                        ),
+                                                        TextSpan(
+                                                          text: selectedItem
+                                                              .referenceNumber
+                                                              .toString(),
+                                                          style: context
+                                                              .textTheme
+                                                              .labelMedium
+                                                              ?.copyWith(
+                                                                  color: const Color(
+                                                                      0xff000000)),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            TextSpan(
-                                              text: _withdrawalController
-                                                  .selectedValue
-                                                  .value!
-                                                  .referenceNumber
-                                                  .toString(),
-                                              style: context.textTheme.bodySmall
-                                                  ?.copyWith(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.w600),
+
+                                            //  SizedBox(
+
+                                            Expanded(
+                                              flex: 2,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    selectedItem.group!.name
+                                                        .toString(),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: context
+                                                        .textTheme.labelLarge
+                                                        ?.copyWith(
+                                                            color: const Color(
+                                                                0xff282828)),
+                                                  ),
+                                                  // const SizedBox(height: 4),
+                                                  RichText(
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines:
+                                                        1, // limit to one line with ...
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              "Manufacturer: ",
+                                                          style: context
+                                                              .textTheme
+                                                              .labelSmall
+                                                              ?.copyWith(
+                                                                  color: const Color(
+                                                                      0xff282828)),
+                                                        ),
+                                                        TextSpan(
+                                                          text: selectedItem
+                                                              .inventoryManufacturer
+                                                              ?.name
+                                                              .toString(),
+                                                          style: context
+                                                              .textTheme
+                                                              .labelSmall
+                                                              ?.copyWith(
+                                                            color: const Color(
+                                                                0xff000000),
+                                                            overflow: TextOverflow
+                                                                .ellipsis, // Ellipsis inside TextSpan
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
 
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment
-                                        .end, // Align text to the left
-                                    children: [
-                                      Text(
-                                        _withdrawalController
-                                            .selectedValue.value!.group!.name
-                                            .toString(),
-                                        maxLines: 1, // Prevents overflow
-                                        overflow:
-                                            TextOverflow.ellipsis, // Show "..."
-                                        style: context.textTheme.bodyMedium
-                                            ?.copyWith(
-                                                color: Color(0xff000000),
-                                                fontWeight: FontWeight.w500),
-                                      ),
-                                      const SizedBox(height: 4), // Add spacing
-                                      SizedBox(
-                                        width: 150,
-                                        child: RichText(
-                                          overflow: TextOverflow
-                                              .ellipsis, // Ensure RichText also respects boundaries
-                                          maxLines:
-                                              2, // Allow up to 2 lines before ellipses
-                                          text: TextSpan(
+                                        const SizedBox(height: 20),
+
+                                        Text(
+                                          'Measurement Unit',
+                                          style: context.textTheme.labelSmall
+                                              ?.copyWith(
+                                                  color:
+                                                      const Color(0xff000000)),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          width: double.infinity,
+                                          height: 50,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xffF9F9F9),
+                                            border: Border.all(
+                                                color: const Color(0xffDEDEDE),
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Obx(() {
+                                            final units = _withdrawalController
+                                                .measurementUnitModel;
+                                            final currentWithdrawal =
+                                                _withdrawalController
+                                                    .getWithdrawalForItem(
+                                                        selectedItem.id
+                                                            .toString());
+
+                                            return DropdownButton<String>(
+                                              value: currentWithdrawal
+                                                          ?.measurementUnitName
+                                                          ?.isNotEmpty ==
+                                                      true
+                                                  ? currentWithdrawal!
+                                                      .measurementUnitName
+                                                  : null,
+
+                                              hint: Text("Select Unit",
+                                                  style: context
+                                                      .textTheme.labelSmall
+                                                      ?.copyWith(
+                                                          color: const Color(
+                                                              0xffC4C2C2))),
+                                              // icon: ,\
+                                              dropdownColor: Colors.white,
+                                              padding: EdgeInsets.zero,
+                                              style: context
+                                                  .textTheme.labelSmall
+                                                  ?.copyWith(
+                                                      color: const Color(
+                                                          0xff000000)),
+                                              isExpanded: true,
+                                              underline: const SizedBox(),
+
+                                              items: units.map((unit) {
+                                                return DropdownMenuItem(
+                                                  value: unit.name,
+                                                  child: Text(
+                                                      unit.name.toString()),
+                                                );
+                                              }).toList(),
+                                              onChanged: (newValue) {
+                                                if (newValue != null) {
+                                                  final selectedUnit =
+                                                      units.firstWhere((u) =>
+                                                          u.name == newValue);
+                                                  _withdrawalController
+                                                      .updateMeasurementUnit(
+                                                    selectedItem.id.toString(),
+                                                    selectedUnit.id
+                                                        .toString(), // backend id
+                                                    selectedUnit.name ??
+                                                        '', // display name
+                                                  );
+                                                  // _withdrawalController
+                                                  //     .updateMeasurementUnit(
+                                                  //         selectedItem.id
+                                                  //             .toString(),
+                                                  //         newValue);
+                                                }
+                                              },
+                                            );
+                                          }),
+                                        ),
+
+                                        const SizedBox(height: 20),
+
+                                        // Quantity section
+                                        Text('Quantity',
+                                            style: context.textTheme.labelSmall
+                                                ?.copyWith(
+                                                    color: const Color(
+                                                        0xff000000))),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          height: 38,
+                                          width: 110,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: const Color(0xffDEDEDE),
+                                                width: 1),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: const Color(0xffF9F9F9),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              TextSpan(
-                                                text: "Manufacturer: ",
-                                                style: context
-                                                    .textTheme.bodySmall
-                                                    ?.copyWith(
-                                                        color: Colors.black),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.add,
+                                                  color: Color(0xff606061),
+                                                  size: 15,
+                                                ),
+                                                onPressed: () {
+                                                  final currentQuantity =
+                                                      _withdrawalController
+                                                              .getWithdrawalForItem(
+                                                                  selectedItem
+                                                                      .id
+                                                                      .toString())
+                                                              ?.quantity ??
+                                                          1;
+                                                  _withdrawalController
+                                                      .updateQuantity(
+                                                          selectedItem.id
+                                                              .toString(),
+                                                          currentQuantity + 1);
+                                                },
                                               ),
-                                              // TextSpan(
-                                              //   text: allItems
-                                              //       .inventoryManufacturer?.name
-                                              //       .toString(),
-                                              //   style: context.textTheme.bodySmall
-                                              //       ?.copyWith(
-                                              //     color: Colors.red,
-                                              //     overflow: TextOverflow
-                                              //         .ellipsis, // Ellipsis inside TextSpan
-                                              //   ),
-                                              // ),
+                                              Obx(() {
+                                                final currentWithdrawal =
+                                                    _withdrawalController
+                                                        .getWithdrawalForItem(
+                                                            selectedItem.id
+                                                                .toString());
+                                                final quantity =
+                                                    currentWithdrawal
+                                                            ?.quantity ??
+                                                        1;
+
+                                                return Text(
+                                                  quantity.toString(),
+                                                  style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Color(0xffC5C2C2)),
+                                                );
+                                              }),
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.remove,
+                                                  color: Color(0xff606061),
+                                                  size: 15,
+                                                ),
+                                                onPressed: () {
+                                                  final currentQuantity =
+                                                      _withdrawalController
+                                                              .getWithdrawalForItem(
+                                                                  selectedItem
+                                                                      .id
+                                                                      .toString())
+                                                              ?.quantity ??
+                                                          1;
+                                                  if (currentQuantity > 1) {
+                                                    _withdrawalController
+                                                        .updateQuantity(
+                                                            selectedItem.id
+                                                                .toString(),
+                                                            currentQuantity -
+                                                                1);
+                                                  }
+                                                },
+                                              ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ]))),
 
-                                  // Moves the checkbox to the left
-                                ]),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text('Measureent Unit'),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              width: double.infinity, // Full width
-                              height: 50, // Fixed height
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12), // Padding inside
-                              decoration: BoxDecoration(
-                                color: Color(0xffF9F9F9),
-                                border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.5), // Border color & thickness
-                                borderRadius:
-                                    BorderRadius.circular(8), // Rounded corners
-                                // Background color
-                              ),
-                              child: Obx(() {
-                                // Extract all unit names from the list
-                                final units =
-                                    _withdrawalController.measurementUnitModel;
-
-                                // Ensure selected value exists
-                                if (_withdrawalController
-                                        .measurementUnit.value.isNotEmpty &&
-                                    !units.any((unit) =>
-                                        unit.name ==
-                                        _withdrawalController
-                                            .measurementUnit.value)) {
-                                  _withdrawalController.measurementUnit.value =
-                                      "";
-                                  _withdrawalController.measurementUnitId
-                                      .value = ""; // Reset unit ID
-                                }
-
-                                return DropdownButton<String>(
-                                  value: _withdrawalController
-                                          .measurementUnit.value.isEmpty
-                                      ? null
-                                      : _withdrawalController
-                                          .measurementUnit.value,
-                                  hint: const Text(
-                                      "Select Unit"), // Provide a hint for null state
-                                  isExpanded:
-                                      true, // Ensure full width dropdown
-                                  underline:
-                                      const SizedBox(), // Remove default underline
-                                  items: units.map((unit) {
-                                    return DropdownMenuItem(
-                                      value: unit.name,
-                                      child: Text(unit.name.toString()),
-                                    );
-                                  }).toList(),
-                                  onChanged: (newValue) {
-                                    _withdrawalController.measurementUnit
-                                        .value = newValue.toString();
-
-                                    // Find and update the unitId
-                                    final selectedUnit = units.firstWhere(
-                                        (unit) => unit.name == newValue);
-                                    _withdrawalController.measurementUnitId
-                                        .value = selectedUnit.id.toString();
-                                  },
-                                );
-                              }),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text('Quantity'),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: 50,
-                              width: 110,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1.5), // Border color & thickness
-                                borderRadius:
-                                    BorderRadius.circular(8), // Rounded corners
-                                color: Color(0xffF9F9F9), // Background color
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // Decrease Button
-                                  IconButton(
-                                    icon: const Icon(Icons.remove,
-                                        color: Color(0xff606061)),
-                                    onPressed: () {
-                                      if (quantity.value > 1) {
-                                        quantity.value--;
-                                      }
-                                    },
-                                  ),
-
-                                  // Display Quantity
-                                  Obx(() {
-                                    _withdrawalController.quantity.value =
-                                        int.parse(quantity.value.toString());
-                                    return Text(
-                                      quantity.value.toString(),
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xffC5C2C2)),
-                                    );
-                                  }),
-
-                                  // Increase Button
-                                  IconButton(
-                                    icon: const Icon(Icons.add,
-                                        color: Color(0xff606061)),
-                                    onPressed: () {
-                                      quantity.value++;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )),
-                  ],
-                );
-              }),
-              const Expanded(
-                child: SizedBox(),
-              ),
-              RectangularButton(
-                onPress: () {
-                  if (_withdrawalController.location.value.isEmpty ||
-                      _withdrawalController.inventoryItemId.value.isEmpty) {
-                    print('called here');
-                    showMessage('Please select a location', context);
-                  } else {}
+            // const Expanded(
+            //   child: SizedBox(),
+            // ),
+            RectangularButton(
+              onPress: () {
+                if (_withdrawalController.selectedLocation.value == null) {
+                  showMessage('Please select a location', context);
+                } else {
                   showWithdrawDialog();
-                },
-                buttonTitle: 'Withdraw',
-                textStyleColor: context.textTheme.labelLarge
-                    ?.copyWith(color: context.colorScheme.secondary),
-                colour: context.colorScheme.tertiary,
-                height: 50,
-              )
-            ],
-          ),
+                }
+              },
+              buttonTitle: 'Withdraw',
+              textStyleColor: context.textTheme.labelLarge
+                  ?.copyWith(color: context.colorScheme.secondary),
+              colour: context.colorScheme.tertiary,
+              height: 50,
+            )
+          ],
         ),
       ),
     );
@@ -870,9 +819,9 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                       buttonTitle: 'Yes',
                       textStyleColor: context.textTheme.labelLarge?.copyWith(
                           fontSize: 14,
-                          color: Color(0xffffffff),
+                          color: const Color(0xffffffff),
                           fontWeight: FontWeight.w600),
-                      colour: Color(0xff00AD57),
+                      colour: const Color(0xff00AD57),
                       height: 50,
                     ),
                   ),
@@ -902,13 +851,13 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
             children: [
               Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Color(0xff000000)),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               RectangularButton(
@@ -918,9 +867,9 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                 buttonTitle: 'Ok',
                 textStyleColor: context.textTheme.labelLarge?.copyWith(
                     fontSize: 14,
-                    color: Color(0xffffffff),
+                    color: const Color(0xffffffff),
                     fontWeight: FontWeight.w600),
-                colour: Color(0xff00AD57),
+                colour: const Color(0xff00AD57),
                 height: 50,
               ),
             ],
@@ -928,254 +877,3 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
         )));
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({Key? key}) : super(key: key);
-
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
-// class User {
-//   final String name;
-//   final int id;
-
-//   User({required this.name, required this.id});
-
-//   @override
-//   String toString() {
-//     return 'User(name: $name, id: $id)';
-//   }
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   final _formKey = GlobalKey<FormState>();
-
-//   final controller = MultiSelectController<User>();
-//   final List<DropdownMenuItem> items = [];
-//   String selectedValue = '';
-
-//   final String loremIpsum =
-//       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-//   @override
-//   void initState() {
-//     String wordPair = "";
-//     loremIpsum
-//         .toLowerCase()
-//         .replaceAll(",", "")
-//         .replaceAll(".", "")
-//         .split(" ")
-//         .forEach((word) {
-//       if (wordPair.isEmpty) {
-//         wordPair = word + " ";
-//       } else {
-//         wordPair += word;
-//         if (items.indexWhere((item) {
-//               return (item.value == wordPair);
-//             }) ==
-//             -1) {
-//           items.add(DropdownMenuItem(
-//             child: Text(wordPair),
-//             value: wordPair,
-//           ));
-//         }
-//         wordPair = "";
-//       }
-//     });
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         backgroundColor: Colors.white,
-//         body: SafeArea(
-//           child: Padding(
-//             padding: const EdgeInsets.all(16),
-//             child: SingleChildScrollView(
-//               physics: const AlwaysScrollableScrollPhysics(),
-//               child: SizedBox(
-//                 width: double.infinity,
-//                 height: MediaQuery.of(context).size.height,
-//                 child: Form(
-//                   key: _formKey,
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     mainAxisSize: MainAxisSize.max,
-//                     children: [
-//                       const SizedBox(
-//                         height: 4,
-//                       ),
-//                       SearchableDropdown.single(
-//                         items: [
-//                           DropdownMenuItem(
-//                             child: Text("one item"),
-//                             value: "one item",
-//                           ),
-//                           DropdownMenuItem(
-//                             child: Text("one item"),
-//                             value: "one item",
-//                           ),
-//                           DropdownMenuItem(
-//                             child: Text("one item"),
-//                             value: "one item",
-//                           ),
-//                           DropdownMenuItem(
-//                             child: Text("three item"),
-//                             value: "three item",
-//                           )
-//                         ],
-//                         value: selectedValue,
-//                         hint: "Select one",
-//                         searchHint: "Select one",
-//                         onChanged: (value) {
-//                           setState(() {
-//                             selectedValue = value;
-//                           });
-//                         },
-//                         doneButton: "Done",
-//                         displayItem: (item, selected) {
-//                           return (Row(children: [
-//                             selected
-//                                 ? Icon(
-//                                     Icons.radio_button_checked,
-//                                     color: Colors.grey,
-//                                   )
-//                                 : Icon(
-//                                     Icons.radio_button_unchecked,
-//                                     color: Colors.grey,
-//                                   ),
-//                             SizedBox(width: 7),
-//                             Expanded(
-//                               child: item,
-//                             ),
-//                           ]));
-//                         },
-//                         isExpanded: true,
-//                       ),
-//                       // MultiDropdown<User>(
-//                       //   items: items,
-//                       //   controller: controller,
-//                       //   enabled: true,
-//                       //   searchEnabled: true,
-//                       //   chipDecoration: const ChipDecoration(
-//                       //     backgroundColor: Colors.yellow,
-//                       //     wrap: true,
-//                       //     runSpacing: 2,
-//                       //     spacing: 10,
-//                       //   ),
-//                       //   fieldDecoration: FieldDecoration(
-//                       //     hintText: 'Countries',
-//                       //     hintStyle: const TextStyle(color: Colors.black87),
-//                       //     prefixIcon: const Icon(CupertinoIcons.flag),
-//                       //     showClearIcon: false,
-//                       //     border: OutlineInputBorder(
-//                       //       borderRadius: BorderRadius.circular(12),
-//                       //       borderSide: const BorderSide(color: Colors.grey),
-//                       //     ),
-//                       //     focusedBorder: OutlineInputBorder(
-//                       //       borderRadius: BorderRadius.circular(12),
-//                       //       borderSide: const BorderSide(
-//                       //         color: Colors.black87,
-//                       //       ),
-//                       //     ),
-//                       //   ),
-//                       //   dropdownDecoration: const DropdownDecoration(
-//                       //     marginTop: 2,
-//                       //     maxHeight: 500,
-//                       //     header: Padding(
-//                       //       padding: EdgeInsets.all(8),
-//                       //       child: Text(
-//                       //         'Select countries from the list',
-//                       //         textAlign: TextAlign.start,
-//                       //         style: TextStyle(
-//                       //           fontSize: 16,
-//                       //           fontWeight: FontWeight.bold,
-//                       //         ),
-//                       //       ),
-//                       //     ),
-//                       //   ),
-//                       //   dropdownItemDecoration: DropdownItemDecoration(
-//                       //     selectedIcon:
-//                       //         const Icon(Icons.check_box, color: Colors.green),
-//                       //     disabledIcon:
-//                       //         Icon(Icons.lock, color: Colors.grey.shade300),
-//                       //   ),
-//                       //   validator: (value) {
-//                       //     if (value == null || value.isEmpty) {
-//                       //       return 'Please select a country';
-//                       //     }
-//                       //     return null;
-//                       //   },
-//                       //   onSelectionChange: (selectedItems) {
-//                       //     debugPrint("OnSelectionChange: $selectedItems");
-//                       //   },
-//                       // ),
-//                       const SizedBox(height: 12),
-//                       Wrap(
-//                         spacing: 8,
-//                         children: [
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               if (_formKey.currentState?.validate() ?? false) {
-//                                 final selectedItems = controller.selectedItems;
-
-//                                 debugPrint(selectedItems.toString());
-//                               }
-//                             },
-//                             child: const Text('Submit'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.selectAll();
-//                             },
-//                             child: const Text('Select All'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.clearAll();
-//                             },
-//                             child: const Text('Unselect All'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.addItems([
-//                                 DropdownItem(
-//                                     label: 'France',
-//                                     value: User(name: 'France', id: 8)),
-//                               ]);
-//                             },
-//                             child: const Text('Add Items'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.selectWhere((element) =>
-//                                   element.value.id == 1 ||
-//                                   element.value.id == 2 ||
-//                                   element.value.id == 3);
-//                             },
-//                             child: const Text('Select Where'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.selectAtIndex(0);
-//                             },
-//                             child: const Text('Select At Index'),
-//                           ),
-//                           ElevatedButton(
-//                             onPressed: () {
-//                               controller.openDropdown();
-//                             },
-//                             child: const Text('Open/Close dropdown'),
-//                           ),
-//                         ],
-//                       )
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ));
-//   }
-// }
