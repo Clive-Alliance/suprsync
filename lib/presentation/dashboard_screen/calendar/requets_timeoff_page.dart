@@ -11,7 +11,7 @@ class RequestTimeOffScreen extends StatefulWidget {
   const RequestTimeOffScreen({super.key});
 
   @override
-  _RequestTimeOffScreenState createState() => _RequestTimeOffScreenState();
+  State<RequestTimeOffScreen> createState() => _RequestTimeOffScreenState();
 }
 
 class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
@@ -30,15 +30,13 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            primaryColor: const Color(0xff00AD57), // Header color
-            // accentColor: Colors.deepPurple, // Selected date circle color
+            primaryColor: const Color(0xff00AD57),
             colorScheme: const ColorScheme.light(
-              primary: Color(0xff00AD57), // Header and selected date color
-              onPrimary: Colors.white, // Text color on header
-              onSurface: Colors.black, // Body text color
+              primary: Color(0xff00AD57),
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
             ),
-            dialogBackgroundColor:
-                Colors.white, // Background color of the dialog
+            dialogBackgroundColor: Colors.white,
           ),
           child: child!,
         );
@@ -144,8 +142,8 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                                     style: context.textTheme.bodySmall
                                         ?.copyWith(
                                             color: isSelected[0]
-                                                ? Color(0xff000000)
-                                                : Color(0xffABABAB)),
+                                                ? const Color(0xff000000)
+                                                : const Color(0xffABABAB)),
                                   ),
                                   Image.asset(
                                     AppIcons.calendarOutline,
@@ -191,8 +189,8 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                                     style: context.textTheme.bodySmall
                                         ?.copyWith(
                                             color: isSelected[1]
-                                                ? Color(0xff000000)
-                                                : Color(0xffABABAB)),
+                                                ? const Color(0xff000000)
+                                                : const Color(0xffABABAB)),
                                   ),
                                   Image.asset(
                                     AppIcons.calendarOutline,
@@ -214,10 +212,9 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                        color: const Color(0xffDEDEDE),
-                        width: 1.0), // Border for the dropdown
-                    borderRadius: BorderRadius.circular(5.0), // Rounded corners
+                    border:
+                        Border.all(color: const Color(0xffDEDEDE), width: 1.0),
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
                   child: Obx(() {
                     return DropdownButton<String>(
@@ -225,15 +222,13 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                       hint: Text(
                         "Choose Vacation type",
                         style: context.textTheme.bodySmall
-                            ?.copyWith(color: Color(0xffABABAB)),
+                            ?.copyWith(color: const Color(0xffABABAB)),
                       ),
-                      // Placeholder text
                       dropdownColor: Colors.white,
                       padding: EdgeInsets.zero,
                       style: context.textTheme.bodyMedium,
-                      underline: SizedBox(), // Remove the default underline
-                      isExpanded:
-                          true, // Makes the dropdown expand to the container width
+                      underline: const SizedBox(),
+                      isExpanded: true,
                       items: _calendarController.items.map((String item) {
                         return DropdownMenuItem<String>(
                           value: item,
@@ -245,8 +240,7 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                       }).toList(),
                       onChanged: (String? value) {
                         if (value != null) {
-                          _calendarController.selectItem(
-                              value); // Call the controller's method
+                          _calendarController.selectItem(value);
                         }
                       },
                     );
@@ -263,8 +257,8 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                 TextFormField(
                   controller: _reasonController,
                   // initialValue: initialValue,
-                  textCapitalization: TextCapitalization
-                      .sentences, // Capitalizes the first letter of each senten                  // readOnly: readOnly,
+                  textCapitalization:
+                      TextCapitalization.sentences, // readOnly: readOnly,
                   // onTap: onTap,
                   maxLines: 5,
 
@@ -318,9 +312,6 @@ class _RequestTimeOffScreenState extends State<RequestTimeOffScreen> {
                         _calendarController.endDate.value = endDate;
                         _calendarController.reason.value =
                             _reasonController.text;
-
-                        print(
-                            "${_calendarController.startDate.value}, ${_calendarController.endDate.value}, ${_calendarController.reason.value}");
                         await _calendarController.requestTimeOff();
                         // Get.back();
                       }

@@ -15,7 +15,6 @@ class CalendarServices {
     Map<String, String> headers;
     Map<String, dynamic> body;
     String url = '$prodUrl/blockdays';
-    print('Okay we dey here');
     headers = {
       "Accept": "application/json",
       "Content-Type": "application/json",
@@ -29,11 +28,8 @@ class CalendarServices {
 
     return await _networkHelper
         .post(url, headers: headers, body: body)
-        .then((value) {
-      print('days blocked');
-      // Get.back();
-    }).catchError((onError) {
-      print(onError);
+        .then((value) {})
+        .catchError((onError) {
       Get.back();
       showSnackBar(onError.toString());
     });
@@ -42,7 +38,6 @@ class CalendarServices {
   Future getBlockedDays(id, token) async {
     UnavailableDaysModel unavailbleDays;
     Map<String, String> headers;
-    Map<String, dynamic> body;
     String url = '$prodUrl/getblockdays/$id';
     headers = {
       "Accept": "application/json",
@@ -56,13 +51,9 @@ class CalendarServices {
       headers: headers,
     )
         .then((value) {
-      print(value);
-
       unavailbleDays = UnavailableDaysModel.fromJson(value);
-      print('unavailable days na $unavailbleDays');
       return unavailbleDays;
     }).catchError((onError) {
-      print(onError);
       Get.back();
       showSnackBar(onError.toString());
     });
@@ -70,15 +61,12 @@ class CalendarServices {
 
   Future unblockDays(selectedDay, token) async {
     Map<String, String> headers;
-    Map<String, dynamic> body;
-    // String url = '$prodUrl/unblock/2023-06-02';
     String url = '$prodUrl/unblock/$selectedDay';
     headers = {
       "Accept": "application/json",
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
-    print('$selectedDay');
     return await _networkHelper
         .delete(
           url,
@@ -102,8 +90,7 @@ class CalendarServices {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
-    String value = timeoffType.replaceAll(' ', '_');
-    print("${value}, ${endDate}");
+
     body = {
       "reason": reason,
       "start": startDate,
@@ -114,11 +101,9 @@ class CalendarServices {
         .post(url, headers: headers, body: body)
         .then((value) {
       requestTimeOff = RequestTimeoffModel.fromJson(value);
-      print('sent time off details $requestTimeOff');
       Get.back();
       return requestTimeOff;
     }).catchError((onError) {
-      print(onError);
       Get.back();
       showSnackBar(onError.toString());
     });
@@ -148,8 +133,6 @@ class CalendarServices {
 
       return requestedTimeOff;
     }).catchError((onError) {
-      print(onError);
-      // Get.back();
       showSnackBar(onError.toString());
     });
   }

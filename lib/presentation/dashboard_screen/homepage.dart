@@ -5,8 +5,6 @@ import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/models/signin_model.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
-import 'package:suprsync/presentation/dashboard_screen/account_information/account_information_page.dart';
-import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
@@ -49,6 +47,7 @@ class _HomePageState extends State<HomePage> {
     _itemsController.fetchAvailableLocatios();
     _transferController.requestTransferItemsList();
     _clockInAndOutController.getWifiName();
+
     // _shiftController.loadClockedInShifts();
   }
 
@@ -78,6 +77,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // ignore: prefer_const_constructors
           Get.to(() => QrScanner());
         },
         backgroundColor: const Color(0xFF00AD57),

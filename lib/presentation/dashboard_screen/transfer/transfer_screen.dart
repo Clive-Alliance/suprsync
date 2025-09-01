@@ -4,7 +4,6 @@ import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/show_message.dart';
 import 'package:suprsync/models/location_model.dart' as models;
-import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
 import 'package:suprsync/presentation/dashboard_screen/transfer/transferred_items_sheet.dart';
 import 'package:suprsync/presentation/dashboard_screen/widgets/dropdown_picker.dart';
@@ -161,24 +160,12 @@ class _TransferScreenState extends State<TransferScreen> {
   }
 
   void showTransferredItemsSheet(BuildContext context) {
-    // final ValueCallback onValueSelected;
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    // AuthController _authController = AuthController();
-    bool isVisible = false;
-
-    Size size = MediaQuery.of(context).size;
     showModalBottomSheet(
         isScrollControlled: true,
         backgroundColor: context.colorScheme.secondary,
         context: context,
         builder: (BuildContext context) {
-          return TransferredItemsSheet(
-              // emailController: _emailController,
-              // // isVisible: isVisible,
-              // passwordController: _passwordController,
-              // authController: _authController
-              );
+          return const TransferredItemsSheet();
         });
   }
 }
@@ -194,7 +181,7 @@ class CustomSearchableDropdown extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomSearchableDropdownState createState() =>
+  State<CustomSearchableDropdown> createState() =>
       _CustomSearchableDropdownState();
 }
 
@@ -220,7 +207,7 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
 
   void _showDropdown() {
     _overlayEntry = _createOverlayEntry();
-    Overlay.of(context)?.insert(_overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
   }
 
   void _removeDropdown() {
@@ -259,7 +246,7 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
                   child: ListTile(
                     title: Text(item),
                     trailing: _selectedItem == item
-                        ? Icon(Icons.check, color: Colors.green)
+                        ? const Icon(Icons.check, color: Colors.green)
                         : null,
                   ),
                 );
@@ -288,7 +275,7 @@ class _CustomSearchableDropdownState extends State<CustomSearchableDropdown> {
           controller: _controller,
           focusNode: _focusNode,
           onChanged: _filterItems,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             hintText: "Search...",
             suffixIcon: Icon(Icons.arrow_drop_down),
             border: OutlineInputBorder(),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
-import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
 import 'package:suprsync/presentation/dashboard_screen/transfer/transfer_item_dialog.dart';
@@ -121,7 +120,6 @@ class _TransferredItemsSheetState extends State<TransferredItemsSheet> {
                                   color: Color(0xffE7E7E7),
                                 ),
                             itemBuilder: (context, index) {
-                              final isCurrentSession = index < 2;
                               var requestedTransferItem = _transferController
                                   .specifiedTransferList[index];
                               return Padding(

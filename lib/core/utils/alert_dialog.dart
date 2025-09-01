@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
 import 'package:suprsync/core/utils/app_button.dart';
-import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 
 showAlertDialog(VoidCallback onTapFunction) {
   Get.dialog(Dialog(

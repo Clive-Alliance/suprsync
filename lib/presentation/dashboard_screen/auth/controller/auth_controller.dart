@@ -8,18 +8,15 @@ import 'package:suprsync/models/signin_model.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/login_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/homepage.dart';
 import 'package:suprsync/services/auth_service.dart';
-import 'package:suprsync/services/clock_in_services.dart';
 import '../../../../core/utils/shared_preferences.dart';
 
 class AuthController extends GetxController {
   final Authentication _authentication = Authentication();
   final LocalAuthentication localAuth = LocalAuthentication();
-  ClockinServices _clockinServices = ClockinServices();
 
   var userAuth = Rxn<SignInUserModel>();
   var userId = ''.obs; // Define userAuth as private variable
   final Rx<String> userDp = ''.obs;
-  // String get userDp => _userDp.value;
   final Rx<String> firstName = ''.obs;
   final Rx<String> lastName = ''.obs;
   final Rx<String> email = ''.obs;
@@ -40,7 +37,7 @@ class AuthController extends GetxController {
     gender(value.user!.gender);
     token(value.accessToken);
     membershipId(value.activeCompany!.memberships!.first.id);
-    // userDp(value.user!.picture!.url);
+    userDp(value.user!.picture!.url);
     //  _userDp(value!.user!.avatar);
   }
 

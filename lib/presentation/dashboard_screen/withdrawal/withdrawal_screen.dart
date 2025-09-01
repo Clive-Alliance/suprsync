@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
-import 'package:multi_dropdown/multi_dropdown.dart';
+
 import 'package:nb_utils/nb_utils.dart' hide ContextExtensions;
-import 'package:suprsync/core/constants/app_images.dart';
+
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/show_message.dart';
 import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/models/all_items_model.dart';
 import 'package:suprsync/models/location_model.dart' as loc;
-import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/widgets/multiple_dropdown_widget.dart.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
@@ -27,8 +26,6 @@ class WithdrawalSheetSheet extends StatefulWidget {
 }
 
 class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
-  List<AllItemsModel> _preservedSelectedItems = [];
-
   bool isVisible = false;
   final Set<int> selectedItems = {}; // Track selected items
   String? selectedValue;
@@ -41,8 +38,7 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
   final RxInt quantity = 0.obs;
   List<int> selectedItemsMultiDialog = [];
 
-  List<DropdownMenuItem<AllItemsModel>> _customDroplist = [];
-  AllItemsModel? _selectedCustom;
+  final List<DropdownMenuItem<AllItemsModel>> _customDroplist = [];
   List<int> selectedItemsMultiCustomDisplayDialog = [];
 
   @override
@@ -64,7 +60,6 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -170,9 +165,6 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                         ?.copyWith(color: const Color(0xffC4C2C2)),
                     hint: "Select item",
                     onChanged: (value) {
-                      setState(() {
-                        _selectedCustom = value;
-                      });
                       // _withdrawalController.selectedItems.value = value;
                     },
 
@@ -399,9 +391,6 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                                 itemCount: selectedItems.length,
                                 itemBuilder: (context, index) {
                                   final selectedItem = selectedItems[index];
-                                  final withdrawal = _withdrawalController
-                                      .getWithdrawalForItem(
-                                          selectedItem.id.toString());
 
                                   return Container(
                                     margin: const EdgeInsets.only(bottom: 10),

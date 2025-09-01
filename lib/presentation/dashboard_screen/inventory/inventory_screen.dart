@@ -35,15 +35,15 @@ class _InventoryScreenState extends State<InventoryScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => WithdrawalSheetSheet());
+                  Get.to(() => const WithdrawalSheetSheet());
                   ;
                 },
                 child: Container(
-                  color: Color(0xffF8F8F8),
-                  padding: EdgeInsets.all(20),
+                  color: const Color(0xffF8F8F8),
+                  padding: const EdgeInsets.all(20),
                   width: double.infinity,
                   height: 60,
-                  child: Text('Withdrawal'),
+                  child: const Text('Withdrawal'),
                 ),
               ),
               const SizedBox(
@@ -51,13 +51,13 @@ class _InventoryScreenState extends State<InventoryScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => TransferScreen());
+                  Get.to(() => const TransferScreen());
                 },
                 child: Container(
-                  color: Color(0xffF8F8F8),
-                  padding: EdgeInsets.all(20),
+                  color: const Color(0xffF8F8F8),
+                  padding: const EdgeInsets.all(20),
                   width: double.infinity,
-                  child: Text('Transfer'),
+                  child: const Text('Transfer'),
                 ),
               )
             ],
@@ -65,22 +65,5 @@ class _InventoryScreenState extends State<InventoryScreen> {
         ),
       ),
     );
-  }
-
-  void showWithdrawalSheet(BuildContext context) {
-    // final ValueCallback onValueSelected;
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    // AuthController _authController = AuthController();
-    bool isVisible = false;
-
-    Size size = MediaQuery.of(context).size;
-    showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: context.colorScheme.secondary,
-        context: context,
-        builder: (BuildContext context) {
-          return WithdrawalSheetSheet();
-        });
   }
 }

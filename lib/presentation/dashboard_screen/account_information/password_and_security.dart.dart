@@ -1,4 +1,3 @@
-// import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
@@ -243,7 +242,6 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
               child: CupertinoSwitch(
                   value: isActivated,
                   onChanged: (value) {
-                    print(value);
                     isActivated = !isActivated;
                   }),
             ),
@@ -254,6 +252,5 @@ class _FaceIdScreenState extends State<FaceIdScreen> {
         ],
       ),
     );
-    ;
   }
 }

@@ -6,8 +6,6 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/date_utils.dart';
 import 'package:suprsync/core/utils/loader.dart';
-import 'package:suprsync/models/shifts_model.dart';
-import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/widgets/days_grid.dart';
@@ -27,18 +25,13 @@ class _SchedulePageState extends State<SchedulePage> {
   String get monthYear => DateFormat.yMMMM().format(DateTime.now());
   final ShiftController _shiftController = Get.find();
   final CalendarController _calendarController = Get.find();
-  final AuthController _authController = Get.find();
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> _pullRefresh() async {
     await Future.delayed(const Duration(milliseconds: 1000));
     showLoading();
-    _shiftController.fetchAvailableShift();
+    _shiftController.fetchAllShifts();
     Get.back();
     _refreshController.refreshCompleted();
   }
@@ -49,8 +42,15 @@ class _SchedulePageState extends State<SchedulePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _calendarController.updateTodaysDate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return SmartRefresher(
       onRefresh: _pullRefresh,
       enablePullDown: true,
@@ -82,14 +82,10 @@ class _SchedulePageState extends State<SchedulePage> {
                     Obx(() {
                       return IconButton(
                         icon: _shiftController.filterApplied.value
-                            ? const Icon(
-                                Icons.filter_alt) // For when filter is applied
-                            : const Icon(
-                                Icons.filter), // For when filter is not applied
+                            ? const Icon(Icons.filter_alt)
+                            : const Icon(Icons.filter),
                         onPressed: () {
-                          _shiftController.filterApplied.value =
-                              !_shiftController.filterApplied.value;
-                          _shiftController.fetchAvailableShift();
+                          _shiftController.toggleFilter();
                         },
                       );
                     })
@@ -165,9 +161,9 @@ class _SchedulePageState extends State<SchedulePage> {
                         child: CircularProgressIndicator(),
                       );
                     }
+                    final currentShifts = _shiftController.currentShifts;
 
-                    // print(_shiftController.shiftsModel.first.start);
-                    return _shiftController.shiftsModel.isEmpty
+                    return currentShifts.isEmpty
                         ? const Center(
                             child: Text(
                               'No shift available.',
@@ -178,38 +174,27 @@ class _SchedulePageState extends State<SchedulePage> {
                             children: [
                               ListView.builder(
                                 padding: EdgeInsets.zero,
-                                itemCount: _shiftController.shiftsModel.length,
+                                itemCount: currentShifts.length,
                                 reverse: true,
-                                physics: NeverScrollableScrollPhysics(),
+                                physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
                                   var shift =
-                                      _shiftController.shiftsModel[index];
-                                  // Initialize variables for the day and time
+                                      currentShifts[index]; // Simplified
+
                                   String dayOfWeek = "Invalid Date";
-                                  String timeRange = "Unavailable";
-                                  String hoursWorked = "invalid date";
+
                                   String duration = "invalid date";
-                                  String month = "invalid date";
                                   String hexCode = '0xff26BFBF';
-                                  print(shift.slot!.branch!.hexcode);
                                   try {
-                                    // Attempt to parse the start date
                                     DateTime parsedDate =
                                         DateTime.parse(shift.start.toString());
 
-                                    // Format the DateTime to get the full day name
                                     dayOfWeek =
                                         DateFormat('EEEE').format(parsedDate);
                                   } catch (e) {}
 
-                                  // Check if slot details are valid
                                   if (shift.slot != null) {
-                                    timeRange =
-                                        '${shift.slot!.startTime} - ${shift.slot!.endTime}';
-                                    hoursWorked = calculateHours(
-                                        shift.slot!.startTime!,
-                                        shift.slot!.endTime!);
                                     duration = formatTimeRange(
                                         shift.slot!.startTime!,
                                         shift.slot!.endTime!);
@@ -217,13 +202,10 @@ class _SchedulePageState extends State<SchedulePage> {
                                         '0xff${shift.slot!.branch!.hexcode!.substring(
                                       1,
                                     )}';
-                                    // month = monthFormatter(
-                                    //     "${clockController.pastScheduleModel[index].createdOn}");
                                   }
                                   String initials =
                                       '${shift.user?.firstName.toString().substring(0, 1)} ${shift.user?.lastName.toString().substring(0, 1)}';
-                                  return dayOfWeek != "Invalid Date" &&
-                                          shift.swappable == false
+                                  return dayOfWeek != "Invalid Date"
                                       ? SwapCard(
                                           isActive: true,
                                           day: dayOfWeek,
@@ -238,101 +220,9 @@ class _SchedulePageState extends State<SchedulePage> {
                                           hexcode: hexCode,
                                           initials: initials,
                                         )
-                                      : const SizedBox
-                                          .shrink(); // Skip invalid entries
+                                      : const SizedBox.shrink();
                                 },
                               ),
-                              // Visibility(
-                              //   visible:
-                              //       _shiftController.shiftsModel.isNotEmpty,
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.only(
-                              //         left: 20.0, top: 20),
-                              //     child: Row(
-                              //       mainAxisAlignment: MainAxisAlignment.start,
-                              //       children: [
-                              //         Text(
-                              //           'Open shifts for swap',
-                              //           style: context.textTheme.bodyMedium
-                              //               ?.copyWith(
-                              //                   fontWeight: FontWeight.w700,
-                              //                   color: Color(0xffD9694D)),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ),
-                              // ),
-                              // Visibility(
-                              //     visible: _shiftController
-                              //         .swappableShiftsModel.isNotEmpty,
-                              //     child: ListView.builder(
-                              //       padding: EdgeInsets.zero,
-                              //       itemCount: _shiftController
-                              //           .swappableShiftsModel.length,
-                              //       shrinkWrap: true,
-                              //       physics: NeverScrollableScrollPhysics(),
-                              //       // reverse: true,
-                              //       itemBuilder: (context, index) {
-                              //         var shift = _shiftController
-                              //             .swappableShiftsModel[index];
-                              //         // Initialize variables for the day and time
-                              //         String dayOfWeek = "Invalid Date";
-                              //         String timeRange = "Unavailable";
-                              //         String hoursWorked = "invalid date";
-                              //         String duration = "invalid date";
-                              //         String month = "invalid date";
-                              //         String hexCode = '0xff26BFBF';
-                              //         print(shift.slot!.branch!.hexcode);
-                              //         try {
-                              //           // Attempt to parse the start date
-                              //           DateTime parsedDate = DateTime.parse(
-                              //               shift.start.toString());
-
-                              //           // Format the DateTime to get the full day name
-                              //           dayOfWeek = DateFormat('EEEE')
-                              //               .format(parsedDate);
-                              //         } catch (e) {}
-
-                              //         // Check if slot details are valid
-                              //         if (shift.slot != null) {
-                              //           timeRange =
-                              //               '${shift.slot!.startTime} - ${shift.slot!.endTime}';
-                              //           hoursWorked = calculateHours(
-                              //               shift.slot!.startTime!,
-                              //               shift.slot!.endTime!);
-                              //           duration = formatTimeRange(
-                              //               shift.slot!.startTime!,
-                              //               shift.slot!.endTime!);
-                              //           hexCode =
-                              //               '0xff${shift.slot!.branch!.hexcode!.substring(
-                              //             1,
-                              //           )}';
-                              //           // month = monthFormatter(
-                              //           //
-                              //           //   "${clockController.pastScheduleModel[index].createdOn}");
-                              //         }
-                              //         String initials =
-                              //             '${shift.user?.firstName.toString().substring(0, 1)}${shift.user?.lastName.toString().substring(0, 1)}';
-                              //         return dayOfWeek != "Invalid Date" &&
-                              //                 shift.swappable == true
-                              //             ? SwapCard(
-                              //                 isActive: true,
-                              //                 day: dayOfWeek,
-                              //                 time: duration,
-                              //                 id: shift.id.toString(),
-                              //                 title:
-                              //                     '${shift.user?.firstName ?? "Unknown"} ${shift.user?.lastName ?? ""}',
-                              //                 isOpenForSwap:
-                              //                     shift.swappable ?? false,
-                              //                 branch: shift.slot!.branch!.name
-                              //                     .toString(),
-                              //                 hexcode: hexCode,
-                              //                 initials: initials,
-                              //               )
-                              //             : const SizedBox
-                              //                 .shrink(); // Skip invalid entries
-                              //       },
-                              //     ))
                             ],
                           );
                   }),
@@ -340,9 +230,6 @@ class _SchedulePageState extends State<SchedulePage> {
               ),
             ),
           ),
-
-          // const Spacer()
-          // ,
         ],
       ),
     );

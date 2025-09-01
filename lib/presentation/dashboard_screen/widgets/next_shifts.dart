@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
-import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 
 class ShiftCard extends StatelessWidget {
   const ShiftCard({
@@ -21,8 +19,6 @@ class ShiftCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ClockInAndOutController _clockInController = Get.find();
-    final AuthController _authController = Get.find();
     Size size = MediaQuery.of(context).size;
     return Card(
       elevation: 0,

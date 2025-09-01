@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart' hide ContextExtensionss;
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
-import 'package:suprsync/presentation/dashboard_screen/grid.dart';
-
 import 'auth_page.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -17,15 +14,6 @@ class LoginScreen extends StatelessWidget {
       body: SizedBox(
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // const Expanded(child: SizedBox()),
-          // const Text(
-          //   'Unleash the power of your \nbusiness with Snapshot by \nClive.',
-          //   style: TextStyle(
-          //     fontFamily: 'Freight',
-          //     color: Color(0xffffffff),
-          //     fontSize: 28,
-          //   ),
-          // ),
           Container(
             height: MediaQuery.of(context).size.height * .55,
             decoration: const BoxDecoration(
@@ -51,7 +39,7 @@ class LoginScreen extends StatelessWidget {
                 Text(
                   'With Suprsync, stay on top of your schedule like\nnever before. View all your assigned tasks in one\nplace, mark days when you’re unavailable, and \neasily request time off.',
                   style: context.textTheme.bodySmall
-                      ?.copyWith(color: Color(0xff6D6A6A)),
+                      ?.copyWith(color: const Color(0xff6D6A6A)),
                 ),
                 const SizedBox(
                   height: 30,

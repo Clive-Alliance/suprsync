@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
-import 'package:suprsync/core/utils/date_utils.dart';
 import 'package:suprsync/models/checkin_schedule_model.dart';
 
 class CheckinListTile extends StatelessWidget {
