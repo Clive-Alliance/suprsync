@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:suprsync/core/utils/conn.dart';
 import 'package:suprsync/core/utils/error_handler.dart';
 import 'package:suprsync/core/utils/network_helper.dart';
@@ -9,42 +7,69 @@ class WithdrawalService {
   final NetworkHelper _networkHelper = NetworkHelper();
   ErrorHandler errorHandler = ErrorHandler();
 
-  Future withdrawItems(
-    membershipId,
-    inventoryItemId,
-    quantity,
-    measurementUnit,
-    location,
-    token,
-  ) async {
-    Map<String, String> headers;
-    Map<String, dynamic> body;
+  // Future withdrawItems(
+  //   membershipId,
+  //   inventoryItemId,
+  //   quantity,
+  //   measurementUnit,
+  //   location,
+  //   token,
+  // ) async {
+  //   Map<String, String> headers;
+  //   Map<String, dynamic> body;
 
-    String url = '$prodUrl/inventory/withdraw-items';
-    headers = {
+  //   String url = '$prodUrl/inventory/withdraw-items';
+  //   headers = {
+  //     "Accept": "application/json",
+  //     "Content-Type": "application/json",
+  //     'Authorization': 'Bearer $token',
+  //   };
+
+  //   body = {
+  //     "teamMembershipId": membershipId,
+  //     "withdrawalData": [
+  //       {
+  //         "inventoryItemsId": inventoryItemId,
+  //         "quantityToWithdraw": quantity,
+  //         "measurementUnitId": measurementUnit,
+  //         "withdrawLocationId": location,
+  //       }
+  //     ]
+  //   };
+  //   print('your body is $body');
+  //   return _networkHelper
+  //       .post(url, headers: headers, body: body)
+  //       .then((dynamic value) async {
+  //     return value;
+  //   }).catchError((onError) {
+  //     errorHandler.handleError(onError);
+  //   });
+  // }
+
+  Future withdrawItems(
+    String membershipId,
+    List<Map<String, dynamic>> withdrawalData, // 👈 accept list of items
+    String token,
+  ) async {
+    final String url = '$prodUrl/inventory/withdraw-items';
+
+    final headers = {
       "Accept": "application/json",
       "Content-Type": "application/json",
-      'Authorization': 'Bearer $token',
+      "Authorization": "Bearer $token",
     };
 
-    body = {
+    final body = {
       "teamMembershipId": membershipId,
-      "withdrawalData": [
-        {
-          "inventoryItemsId": inventoryItemId,
-          "quantityToWithdraw": quantity,
-          "measurementUnitId": measurementUnit,
-          "withdrawLocationId": location,
-        }
-      ]
+      "withdrawalData": withdrawalData, // 👈 directly use list
     };
-    print(body);
+
+    print('your body is $body');
+
     return _networkHelper
         .post(url, headers: headers, body: body)
-        .then((dynamic value) async {
-      return value;
-    }).catchError((onError) {
-      print('you got an error');
+        .then((dynamic value) async => value)
+        .catchError((onError) {
       errorHandler.handleError(onError);
     });
   }
