@@ -5,7 +5,7 @@ import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_page.dart';
-import 'package:suprsync/presentation/dashboard_screen/schedules/swap_screen.dart';
+import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 
 class SwapCard extends StatelessWidget {
   const SwapCard(
@@ -160,31 +160,29 @@ class SwapCard extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  !isOpenForSwap
-                      ? Obx(() {
-                          _clockInController.swapId.value;
-                          return GestureDetector(
-                            onTap: () {
-                              _clockInController.swapId.value = id;
-                              // Get.to(() => const SwapScreen());
-                            },
-                            child: Container(
-                              color: const Color(0xffFFFFFF),
-                              height: 50,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 14),
-                                child: Text(
-                                  isOpenForSwap
-                                      ? 'Open for Swap'
-                                      : 'Closed for swap',
-                                  style: context.textTheme.labelMedium,
-                                ),
-                              ),
-                            ),
-                          );
-                        })
-                      : const SizedBox(),
+                  Obx(() {
+                    _clockInController.swapId.value;
+                    return GestureDetector(
+                      onTap: () {
+                        _clockInController.swapId.value = id;
+                        print(_clockInController.swapId.value);
+
+                        // Get.to(() => const SwapScreen());
+                      },
+                      child: Container(
+                        color: const Color(0xffFFFFFF),
+                        height: 50,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 14),
+                          child: Text(
+                            isOpenForSwap ? 'Open for Swap' : 'Closed for swap',
+                            style: context.textTheme.labelMedium,
+                          ),
+                        ),
+                      ),
+                    );
+                  })
                 ],
               ),
             ],
@@ -200,6 +198,7 @@ class SwapCard extends StatelessWidget {
     final buttonWidth = renderBox.size.width;
     final buttonHeight = renderBox.size.height - 100;
     print('your shift Id 2 is $shiftId');
+    final ShiftController _shiftsController = Get.find();
 
     // Show the menu to the right of the button
     showMenu(
@@ -228,6 +227,7 @@ class SwapCard extends StatelessWidget {
           onTap: () {
             if (isSwappable) {
               // Get.to(() => SwapScreen());
+              // _shiftsController.swapShift(shiftId);
             } else {
               showSnackBar('This shift is not swappable');
             }
