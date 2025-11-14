@@ -183,10 +183,13 @@ class _ClockoutBottomSheetState extends State<ClockoutBottomSheet> {
                         flex: 2,
                         child: RectangularButton(
                           onPress: () async {
-                            await _clockOutController.clockOutController(
-                              'clockOut',
-                            );
+                            //TODO: Fix
+                            // await _clockOutController.clockOutController(
+                            //   'clockOut',
+                            // );
                             // Get.back();
+
+                            await _clockOutController.attemptClockOut();
 
                             widget.onToggle('Confirm');
                             // Add your login logic here

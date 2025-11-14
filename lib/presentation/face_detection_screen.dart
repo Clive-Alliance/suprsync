@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/_http/_stub/_file_decoder_stub.dart';
 // import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:suprsync/core/constants/app_images.dart';
@@ -41,21 +40,20 @@ class _FaceDetentionScreenState extends State<FaceDetentionScreen> {
   final AuthController _authController = Get.find();
   bool hasScannedFace = false;
   checkIn() {
-    clockInController
-        .clockinController(
-      widget.clockInType,
-    )
+    //TODO: Fix
+
+    clockInController.attemptClockIn()
         .then((value) {
       // if (value.clockedIn == Datetime) {
-      if (value is ClockInModel) {
-        setState(() {
-          hasScannedFace = true;
-        });
+      // if (value is ClockInModel) {
+      //   setState(() {
+      //     hasScannedFace = true;
+      //   });
         // Call toggleActiveState with appropriate state after successful response
         // Get.back();
 
         widget.onReply('Clock In');
-      } else {}
+      // } else {}
 
       // }
     });
@@ -207,10 +205,10 @@ class _FaceDetentionScreenState extends State<FaceDetentionScreen> {
             try {
               bool pass = await localAuth.authenticate(
                 localizedReason: 'Scan Face To Login',
-                options: const AuthenticationOptions(
-                    useErrorDialogs: true,
-                    stickyAuth: true,
-                    biometricOnly: true),
+                // options: const AuthenticationOptions(
+                //     useErrorDialogs: true,
+                //     stickyAuth: true,
+                //     biometricOnly: true),
               );
 
               if (pass) {
@@ -232,8 +230,8 @@ class _FaceDetentionScreenState extends State<FaceDetentionScreen> {
           try {
             bool pass = await localAuth.authenticate(
               localizedReason: 'Touch fingerprint to scan',
-              options: const AuthenticationOptions(
-                  useErrorDialogs: true, stickyAuth: true, biometricOnly: true),
+              // options: const AuthenticationOptions(
+              //     useErrorDialogs: true, stickyAuth: true, biometricOnly: true),
             );
 
             if (pass) {

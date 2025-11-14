@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide ContextExtensionss;
-
-import 'package:nb_utils/nb_utils.dart' hide ContextExtensions;
-
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/show_message.dart';
@@ -288,7 +284,7 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                value.name.toString().capitalizeEachWord(),
+                                value.name.toString(),
                                 style: context.textTheme.bodyMedium
                                     ?.copyWith(color: const Color(0xff535353)),
                                 overflow: TextOverflow.ellipsis,
@@ -417,9 +413,7 @@ class _WithdrawalSheetSheetState extends State<WithdrawalSheetSheet> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    selectedItem.name!
-                                                        .validate()
-                                                        .capitalizeEachWord(),
+                                                    selectedItem.name!,
                                                     style: context
                                                         .textTheme.labelLarge
                                                         ?.copyWith(

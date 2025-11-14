@@ -45,10 +45,13 @@ class WithdrawalController extends GetxController {
     return _withdrawalService
         .withdrawItems(
       _authController.userId.value,
-      inventoryItemId.value,
-      quantity.value,
-      measurementUnit.value.toString(),
-      location.value.toString(),
+      [
+        // inventoryItemId.value,
+        // quantity.value,
+        // measurementUnit.value.toString(),
+        // location.value.toString(),
+      ],
+
       _authController.token.value,
     )
         .then((value) async {

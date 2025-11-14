@@ -10,7 +10,12 @@ class ClockinServices {
   final NetworkHelper _networkHelper = NetworkHelper();
   ErrorHandler errorHandler = ErrorHandler();
 
-  Future clockInAndOut(type, id, token, lng, lat, wifiName) async {
+  Future clockInAndOut(
+      type,
+      id,
+      token,
+      // lng, lat, wifiName,
+      ) async {
     ClockInModel? clockInModel;
     Map<String, String> headers;
     Map<String, String> body;
@@ -22,7 +27,9 @@ class ClockinServices {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
-    body = {"type": type, "long": lng, "lat": lat, "wifiSSID": wifiName};
+    body = {"type": type,
+      // "long": lng, "lat": lat, "wifiSSID": wifiName
+    };
     return await _networkHelper
         .post(url, headers: headers, body: body)
         .then((value) {

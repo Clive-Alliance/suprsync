@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+// import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
@@ -14,23 +14,23 @@ class QrScanner extends StatefulWidget {
 }
 
 class _QrScannerState extends State<QrScanner> {
-  late QRViewController controller;
+  // late QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   final TextEditingController _scannedValue = TextEditingController();
   final TransferController _transferController = Get.find();
   bool isDialogVisible = false; // Track dialog state
 
-  void _onQRViewCreated(QRViewController controller) {
-    setState(() {
-      this.controller = controller;
-    });
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        _scannedValue.text = scanData.code.toString();
-      });
-      _checkForMatchingBatch(_scannedValue.text);
-    });
-  }
+  // void _onQRViewCreated(QRViewController controller) {
+  //   setState(() {
+  //     this.controller = controller;
+  //   });
+  //   controller.scannedDataStream.listen((scanData) {
+  //     setState(() {
+  //       _scannedValue.text = scanData.code.toString();
+  //     });
+  //     _checkForMatchingBatch(_scannedValue.text);
+  //   });
+  // }
 
   void _checkForMatchingBatch(String scannedBatchId) {
     var matchingItem =
@@ -60,13 +60,13 @@ class _QrScannerState extends State<QrScanner> {
                   //   'assets/icons/Group 1040.png',
                   //   height: 230,
                   // ),
-                  Positioned.fill(
-                    child: QRView(
-                      key: qrKey,
-                      onQRViewCreated: _onQRViewCreated,
-                      overlay: QrScannerOverlayShape(),
-                    ),
-                  ),
+                  // Positioned.fill(
+                  //   child: QRView(
+                  //     key: qrKey,
+                  //     onQRViewCreated: _onQRViewCreated,
+                  //     overlay: QrScannerOverlayShape(),
+                  //   ),
+                  // ),
                 ],
               )),
         ),
@@ -81,7 +81,7 @@ class _QrScannerState extends State<QrScanner> {
       isDialogVisible = true; // Set dialog as visible
     });
 
-    controller.pauseCamera();
+    // controller.pauseCamera();
     Get.dialog(
         barrierDismissible: false,
         Dialog(
@@ -92,13 +92,13 @@ class _QrScannerState extends State<QrScanner> {
       setState(() {
         isDialogVisible = false;
       });
-      controller.resumeCamera();
+      // controller.resumeCamera();
     });
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    // controller.dispose();
     _scannedValue.dispose();
     super.dispose();
   }

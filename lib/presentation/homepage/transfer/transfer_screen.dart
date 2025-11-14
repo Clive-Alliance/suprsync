@@ -57,8 +57,8 @@ class _TransferScreenState extends State<TransferScreen> {
                 if (_withdrawalController.isLoading.value) {}
                 return SearchableDropdownFormField<int>(
                   // margin,
-                  searchIconWidget:
-                      Image.asset('assets/icons/element-4.png', height: 18),
+                  // searchIconWidget:
+                  //     Image.asset('assets/icons/element-4.png', height: 18),
                   backgroundDecoration: (child) => Container(
                     decoration: BoxDecoration(
                         border: Border.all(width: 1, color: Color(0xffdedede))),
@@ -68,8 +68,8 @@ class _TransferScreenState extends State<TransferScreen> {
                       child: child,
                     ),
                   ),
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: Color(0xff848484)),
+                  // style: context.textTheme.bodyMedium
+                  //     ?.copyWith(color: Color(0xff848484)),
                   hintText: Text(
                     'Select location',
                     style: context.textTheme.bodyMedium
@@ -137,8 +137,8 @@ class _TransferScreenState extends State<TransferScreen> {
                 if (_withdrawalController.isLoading.value) {}
                 return SearchableDropdownFormField<int>(
                   // margin,
-                  searchIconWidget:
-                      Image.asset('assets/icons/element-4.png', height: 18),
+                  // searchIconWidget:
+                  //     Image.asset('assets/icons/element-4.png', height: 18),
                   backgroundDecoration: (child) => Container(
                     decoration: BoxDecoration(
                         border: Border.all(width: 1, color: Color(0xffdedede))),
@@ -148,8 +148,8 @@ class _TransferScreenState extends State<TransferScreen> {
                       child: child,
                     ),
                   ),
-                  style: context.textTheme.bodyMedium
-                      ?.copyWith(color: Color(0xff848484)),
+                  // style: context.textTheme.bodyMedium
+                  //     ?.copyWith(color: Color(0xff848484)),
                   hintText: Text(
                     'Select location',
                     style: context.textTheme.bodyMedium

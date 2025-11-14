@@ -255,9 +255,10 @@ class ClockInAndOutController extends GetxService {
           type,
           shiftId,
           _authController.token.toString(),
-          long.toString(),
-          lat.toString(),
-          wifiName.value);
+          // long.toString(),
+          // lat.toString(),
+          // wifiName.value
+      );
       print('clockin result $result');
       if (type == 'clockIn') {
         updateClockoutid(shiftId);

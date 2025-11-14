@@ -16,11 +16,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.7+13
+version: 1.1.0+14
 
 environment:
-  sdk: '>=3.1.3 <4.0.0'
-  flutter: "^3.24.0"
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.27.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -32,47 +32,44 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
-  flex_color_scheme: ^7.3.1
-  get: ^4.6.6
-  http: ^1.1.0
+  cupertino_icons: ^1.0.8
+  flex_color_scheme: ^8.3.1
+  get: ^4.7.2
+  http: ^1.2.2
   skeletons: ^0.0.3
   animated_text_kit: ^4.2.2
-  shared_preferences: ^2.2.3
+  shared_preferences: '>=0.5.1'
   flutter_client_sse: ^2.0.3
   html_unescape: ^2.0.0
   flutter_spinkit: ^5.1.0
   # cached_network_image: ^3.3.1
-  flutter_markdown: ^0.6.18  
-  getwidget: ^3.1.1
-  intl: ^0.17.0
+  flutter_markdown: ^0.7.7+1  
+  getwidget: ^7.0.0
+  intl: ^0.20.2
   table_calendar: ^3.0.0
-  logger_util: ^0.0.1
-  local_auth: 
+  local_auth: ^2.3.0
   easy_count_timer: ^0.0.2
-  image_picker: ^1.0.7
+  image_picker: ^1.2.0
   pull_to_refresh: ^2.0.0
-  device_info_plus: ^11.3.0
-  flutter_svg: ^2.0.10+1
+  device_info_plus: ^11.5.0
+  flutter_svg: ^2.0.9
   dropdown_search: ^6.0.2
-  qr_flutter: ^4.1.0
-  qr_code_scanner: ^1.0.1
-  mobile_scanner: ^6.0.7
+  qr_flutter:
+#  qr_code_scanner: ^1.0.1
+  mobile_scanner: ^7.1.3
   multi_dropdown: ^3.0.1
-  geolocator: ^10.0.0
+  geolocator: ^12.0.0
   search_choices: ^2.3.1
-  nb_utils: ^6.1.2
-  network_info_plus: ^6.1.4
+#  nb_utils: ^7.0.4
+  network_info_plus: ^7.0.0
+  searchable_paginated_dropdown: ^1.3.0
+  flutter_searchable_dropdown: ^2.0.0
   # dropdown_search: ^5.0.6
-  
 
 
-
-
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+dependency_overrides:
+  image: ^4.0.0
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -83,7 +80,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -29,7 +29,7 @@ class ShiftController extends GetxController {
     isLoading(true);
 
     return _shiftsServices
-        .fetchAvailableShifts(
+        .fetchAllShifts(
       _authController.userId.value,
       from.value,
       to.value,
