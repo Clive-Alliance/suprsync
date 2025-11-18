@@ -31,13 +31,14 @@ class AuthController extends GetxController {
   // final Rx<String> email = ''.obs;
 
   updateUserDetails(SignInUserModel value) {
+    print(value);
     firstName(value.user!.firstName);
     lastName(value.user!.lastName);
     email(value.user!.email);
     gender(value.user!.gender);
     token(value.accessToken);
     membershipId(value.activeCompany!.memberships!.first.id);
-    userDp(value.user!.picture!.url);
+    userDp(value.user?.picture?.url ?? '');
     //  _userDp(value!.user!.avatar);
   }
 
@@ -67,13 +68,12 @@ class AuthController extends GetxController {
         userAuth(value);
         saveDetails("user", value);
         updateUserDetails(value);
-        userId(value.user!.id.toString());
+        userId(value.user?.id?.toString());
         Get.back();
         Get.to(() => const HomePage());
       }
     }).catchError((onError) {
-      ErrorModel errorModel = ErrorModel.fromJson(jsonDecode(onError['body']));
-      showSnackBar(errorModel.message.toString());
+      showSnackBar('An error occurred while trying to login. Please try again later.');
     });
   }
 

@@ -14,7 +14,7 @@ import '../../../../core/utils/shared_preferences.dart';
 class AuthController extends GetxController {
   final Authentication _authentication = Authentication();
   final LocalAuthentication localAuth = LocalAuthentication();
-  ClockinServices _clockinServices = ClockinServices();
+  final ClockinServices _clockinServices = ClockinServices();
 
   var userAuth = Rxn<SignInUserModel>();
   var userId = ''.obs; // Define userAuth as private variable

@@ -4,9 +4,6 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/app_textfield.dart';
-import 'package:suprsync/core/utils/loader.dart';
-import 'package:suprsync/presentation/homepage/homepage.dart';
-import '../../../core/utils/show_snackbar.dart';
 import 'auth_page.dart';
 import 'controller/auth_controller.dart';
 
@@ -124,7 +121,8 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
             ),
             RectangularButton(
               onPress: () {
-                _authController.signIn('aotegbeye', 'ayodejiotegbeye');
+                // _authController.signIn('aotegbeye', 'ayodejiotegbeye');
+                _authController.signIn(_emailController.text, _passwordController.text);
 
                 // Get.to(() => HomePage());
 

@@ -32,7 +32,7 @@ class Authentication {
     }).then((dynamic value) async {
       Get.back();
       final response = value;
-      print('your resposnse is $response');
+      print('your response is $response');
       final token = value['accessToken'];
       if (token == null) {
       } else {

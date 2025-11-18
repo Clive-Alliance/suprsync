@@ -121,13 +121,10 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
               const SizedBox(height: 32),
               RectangularButton(
                 onPress: () {
-                  if (_emailController.text.isEmpty ||
-                      _passwordController.text.isEmpty) {
+                  if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
                     showSnackBar('Enter an email or password');
-                  } else if (_emailController.text.isNotEmpty &&
-                      _passwordController.text.isNotEmpty) {
-                    _authController.signIn(
-                        _emailController.text, _passwordController.text);
+                  } else if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+                    _authController.signIn(_emailController.text, _passwordController.text);
                   }
                 },
                 buttonTitle: 'Login',
