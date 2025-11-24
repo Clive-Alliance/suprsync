@@ -1,19 +1,42 @@
+import 'dart:ui';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:suprsync/core/theme/app_theme.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
 import 'package:suprsync/presentation/dashboard_screen/account_information/account_controller.dart';
-
 import 'package:suprsync/presentation/dashboard_screen/auth/auth_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
+import 'package:stack_trace/stack_trace.dart' as stack_trace;
+import 'firebase/live/firebase_options.dart' as live;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Add this
+  await Firebase.initializeApp(
+    name: 'suprsync',
+    options: live.DefaultFirebaseOptions.currentPlatform,
+  );
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+  FlutterError.demangleStackTrace = (StackTrace stack) {
+    if (stack is stack_trace.Trace) return stack.vmTrace;
+    if (stack is stack_trace.Chain) return stack.toTrace().vmTrace;
+    return stack;
+  };
 
   // await FaceCamera.initialize();
   Get.put(AuthController(), permanent: true);

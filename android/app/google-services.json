@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "974916899102",
+    "project_id": "suprsync",
+    "storage_bucket": "suprsync.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974916899102:android:b2b513e61c9966235f790f",
+        "android_client_info": {
+          "package_name": "com.cliveai.suprsync"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYsiizSFbQ6NdwgMV15kFm63UMpE9lrt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
