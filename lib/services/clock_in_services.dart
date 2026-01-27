@@ -6,6 +6,9 @@ import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/models/checkin_schedule_model.dart';
 import 'package:suprsync/models/clockin_model.dart';
 
+import '../models/event_schedule.dart';
+import '../models/off_day_schedule.dart';
+
 class ClockinServices {
   final NetworkHelper _networkHelper = NetworkHelper();
   ErrorHandler errorHandler = ErrorHandler();
@@ -48,8 +51,7 @@ class ClockinServices {
     List<CheckInScheduleModel> clockinSchedule = [];
 
     Map<String, String> headers;
-    String url =
-        '$prodUrl/shifts/schedule/clock-ins?from=$from&to=$to&userId=$userId';
+    String url = '$prodUrl/shifts/schedule/clock-ins?from=$from&to=$to&userId=$userId';
     // String url = '$prodUrl/shifts/:$id/clock-in-or-out';
     // 10af7739-9d0a-456a-9a33-2a411f79f151
     headers = {
@@ -72,4 +74,41 @@ class ClockinServices {
       errorHandler.handleError(onError);
     });
   }
+
+
+  Future<List<EventSchedule>> shiftSchedule(String date, token) async {
+    Map<String, String> headers;
+    String url = '$prodUrl/shifts/my-schedule/$date';
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    return _networkHelper.get(url, headers: headers,).then((dynamic value) async {
+      // print(value);
+      var result = List<EventSchedule>.from(value.map((x) => EventSchedule.fromJson(x)));
+      return result;
+    }).catchError((onError) {
+      return errorHandler.handleError(onError);
+    });
+  }
+
+  Future<OffDaySchedule> offDays(String date, token) async {
+    Map<String, String> headers;
+    String url = '$prodUrl/shifts/my-schedule/$date';
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      'Authorization': 'Bearer $token',
+    };
+    return _networkHelper.get(url, headers: headers,).then((dynamic value) async {
+      print('off days');
+      print(value);
+      var result = OffDaySchedule.fromJson(value);
+      return result;
+    }).catchError((onError) {
+      return errorHandler.handleError(onError);
+    });
+  }
+
 }

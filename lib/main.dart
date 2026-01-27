@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:calendar_view/calendar_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,12 @@ void main() async {
   Get.put(ItemsController(), permanent: true);
   Get.put(TransferController(), permanent: true);
 
-  runApp(const MyApp());
+  runApp(
+    CalendarControllerProvider(
+      controller: EventController(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
