@@ -72,6 +72,8 @@ dependencies:
   stack_trace: ^1.12.1
   calendar_view: ^1.4.0
   rxdart: ^0.28.0
+  sentry_flutter: 9.4.1
+
 
 
 

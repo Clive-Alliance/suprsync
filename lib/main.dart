@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:suprsync/core/theme/app_theme.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
@@ -48,10 +49,15 @@ void main() async {
   Get.put(ItemsController(), permanent: true);
   Get.put(TransferController(), permanent: true);
 
-  runApp(
-    CalendarControllerProvider(
-      controller: EventController(),
-      child: const MyApp(),
+  await SentryFlutter.init((options) {
+    options.dsn = 'https://e7302a2c5e4d31bc6bd30a0502d45a7d@o4510777399836672.ingest.de.sentry.io/4510777403375696';
+    options.sendDefaultPii = true;
+  },
+    appRunner: () => runApp(
+      CalendarControllerProvider(
+        controller: EventController(),
+        child: const MyApp(),
+      ),
     ),
   );
 }
