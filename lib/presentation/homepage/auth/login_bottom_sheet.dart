@@ -97,8 +97,16 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
               ),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(
+                  'Remember me?',
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
                 InkWell(
                   onTap: () {
                     Get.back();
