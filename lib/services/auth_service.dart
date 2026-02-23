@@ -6,6 +6,7 @@ import 'package:suprsync/core/utils/error_handler.dart';
 import 'package:suprsync/core/utils/network_helper.dart';
 import 'package:suprsync/models/forgot_password.dart';
 import 'package:suprsync/models/signin_model.dart';
+import 'package:suprsync/util/persistor/data_persistor.dart';
 import '../core/utils/conn.dart';
 import '../core/utils/shared_preferences.dart';
 
@@ -14,11 +15,11 @@ class Authentication {
   ErrorHandler errorHandler = ErrorHandler();
 
   String signInUrl = "$prodUrl/users/signin";
+  String refreshTokenURL = "$prodUrl/users/refresh-token";
   String forgotPasswordUrl = "$prodUrl/users/forgot-password";
   String deviceType = '';
 
   Future signIn(email, password) async {
-    SignInUserModel? signInModel;
     Map<String, String> headers;
     headers = {
       "Accept": "application/json",
@@ -37,7 +38,35 @@ class Authentication {
       if (token == null) {
       } else {
         savePrefs('password', password);
-        signInModel = SignInUserModel.fromJson(response);
+        SignInUserModel? signInModel = SignInUserModel.fromJson(response);
+        DataPersistor.saveAccessToken(token: signInModel.accessToken);
+        DataPersistor.saveRefreshToken(token: signInModel.refreshToken);
+        DataPersistor.saveLoginTime(time: DateTime.now());
+        return signInModel;
+      }
+    }).catchError((onError) {
+      Get.back();
+      errorHandler.handleError(onError);
+    });
+  }
+
+  Future refreshToken(String refreshToken) async {
+    Map<String, String> headers;
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    };
+    return networkHelper.post(refreshTokenURL, headers: headers, body: {
+      "refreshToken": refreshToken,
+    }).then((dynamic response) async {
+      Get.back();
+      final token = response['accessToken'];
+      if (token == null) {
+      } else {
+        SignInUserModel? signInModel = SignInUserModel.fromJson(response);
+        DataPersistor.saveAccessToken(token: signInModel.accessToken);
+        DataPersistor.saveRefreshToken(token: signInModel.refreshToken);
+        DataPersistor.saveLoginTime(time: DateTime.now());
         return signInModel;
       }
     }).catchError((onError) {

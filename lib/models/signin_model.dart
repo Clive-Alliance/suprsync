@@ -1,23 +1,13 @@
-// To parse this JSON data, do
-//
-//     final signInUserModel = signInUserModelFromJson(jsonString);
-
-import 'dart:convert';
-
-SignInUserModel signInUserModelFromJson(String str) =>
-    SignInUserModel.fromJson(json.decode(str));
-
-String signInUserModelToJson(SignInUserModel data) =>
-    json.encode(data.toJson());
-
 class SignInUserModel {
   String? accessToken;
+  String? refreshToken;
   ActiveCompany? activeCompany;
   User? user;
   List<Company>? companies;
 
   SignInUserModel({
     this.accessToken,
+    this.refreshToken,
     this.activeCompany,
     this.user,
     this.companies,
@@ -26,6 +16,7 @@ class SignInUserModel {
   factory SignInUserModel.fromJson(Map<String, dynamic> json) =>
       SignInUserModel(
         accessToken: json["accessToken"],
+        refreshToken: json["refreshToken"],
         activeCompany: json["activeCompany"] == null
             ? null
             : ActiveCompany.fromJson(json["activeCompany"]),
@@ -38,6 +29,7 @@ class SignInUserModel {
 
   Map<String, dynamic> toJson() => {
         "accessToken": accessToken,
+        "refreshToken": refreshToken,
         "activeCompany": activeCompany?.toJson(),
         "user": user?.toJson(),
         "companies": companies == null

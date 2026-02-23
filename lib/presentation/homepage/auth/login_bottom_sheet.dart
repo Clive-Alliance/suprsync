@@ -4,8 +4,9 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/core/utils/app_textfield.dart';
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
 import 'auth_page.dart';
-import 'controller/auth_controller.dart';
+// import 'controller/auth_controller.dart';
 
 class LoginBottomSheet extends StatefulWidget {
   const LoginBottomSheet({
@@ -22,6 +23,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool isVisible = false;
+  bool rememberMe = true;
 
   @override
   Widget build(BuildContext context) {
@@ -96,15 +98,38 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
                 ],
               ),
             ),
+            SizedBox(height: 10,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Remember me?',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w400,
+                InkWell(
+                  splashFactory: NoSplash.splashFactory,
+                  onTap: (){
+                    setState(() {
+                      rememberMe = !rememberMe;
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 20,
+                        width: 20,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          border: BoxBorder.all(color: Colors.grey)
+                        ),
+                        child: rememberMe ? Center(child: Icon(Icons.check, color: Colors.green, size: 16,)) : null,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Remember me?',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 InkWell(
@@ -130,7 +155,7 @@ class _LoginBottomSheetState extends State<LoginBottomSheet> {
             RectangularButton(
               onPress: () {
                 // _authController.signIn('aotegbeye', 'ayodejiotegbeye');
-                _authController.signIn(_emailController.text, _passwordController.text);
+                _authController.signIn(_emailController.text, _passwordController.text, rememberMe);
 
                 // Get.to(() => HomePage());
 

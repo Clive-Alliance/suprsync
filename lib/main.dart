@@ -16,6 +16,8 @@ import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_cont
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
+import 'package:suprsync/services/auth_service.dart';
+import 'package:suprsync/util/persistor/data_persistor.dart';
 import 'firebase/live/firebase_options.dart' as live;
 
 void main() async {
@@ -62,10 +64,34 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final Authentication _authentication = Authentication();
+
+  void checkToken(){
+    DataPersistor.getLoginTime().then((time){
+      if(DateTime.now().isAfter(time ?? DateTime.now())){
+        DataPersistor.getRefreshToken().then((token){
+          if(token.isNotEmpty) {
+            _authentication.refreshToken(token);
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    checkToken();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
