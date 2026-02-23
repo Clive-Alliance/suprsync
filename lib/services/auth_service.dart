@@ -8,19 +8,19 @@ import 'package:suprsync/models/forgot_password.dart';
 import 'package:suprsync/models/signin_model.dart';
 import '../core/utils/conn.dart';
 import '../core/utils/shared_preferences.dart';
+import '../util/persistor/data_persistor.dart';
 
 class Authentication {
   NetworkHelper networkHelper = NetworkHelper();
   ErrorHandler errorHandler = ErrorHandler();
 
   String signInUrl = "$prodUrl/users/signin";
+  String refreshTokenURL = "$prodUrl/users/refresh-token";
   String forgotPasswordUrl = "$prodUrl/users/forgot-password";
   String deviceType = '';
 
   Future signIn(email, password) async {
-    SignInUserModel? signInModel;
-    Map<String, String> headers;
-    headers = {
+    Map<String, String> headers = {
       "Accept": "application/json",
       "Content-Type": "application/json",
     };
@@ -37,7 +37,7 @@ class Authentication {
       if (token == null) {
       } else {
         savePrefs('password', password);
-        signInModel = SignInUserModel.fromJson(response);
+        SignInUserModel? signInModel = SignInUserModel.fromJson(response);
         return signInModel;
       }
     }).catchError((onError) {
@@ -45,6 +45,28 @@ class Authentication {
       errorHandler.handleError(onError);
     });
   }
+
+
+  Future refreshToken(String refreshToken) async {
+    Map<String, String> headers;
+    headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    };
+    return networkHelper.post(refreshTokenURL, headers: headers, body: {
+      "refreshToken": refreshToken,
+    }).then((dynamic response) async {
+      final token = response['accessToken'];
+      if (token == null) {
+      } else {
+        SignInUserModel? signInModel = SignInUserModel.fromJson(response);
+        return signInModel;
+      }
+    }).catchError((onError) {
+      errorHandler.handleError(onError);
+    });
+  }
+
 
   Future forgotPassword(email) async {
     Map<String, String> headers;

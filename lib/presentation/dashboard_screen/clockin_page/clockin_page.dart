@@ -15,6 +15,7 @@ import 'package:suprsync/presentation/dashboard_screen/widgets/next_shifts.dart'
 import 'package:suprsync/presentation/location_clockin_screen.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
+import 'package:suprsync/util/extensions/string.dart';
 
 class ClockInPage extends StatefulWidget {
   const ClockInPage({super.key, this.id});
@@ -71,7 +72,7 @@ class _ClockInPageState extends State<ClockInPage> {
 
         title: Obx(() {
           return Text(
-            '${authController.firstName.value} ${authController.lastName.value.substring(0, 1)}.',
+            '${authController.firstName.value.getFirstLetters()} ${authController.lastName.value.getFirstLetters()}.',
             style: context.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: const Color(0xff414141),

@@ -15,6 +15,8 @@ import 'package:suprsync/presentation/homepage/clockin_page/widgets/checkin_list
 import 'package:suprsync/presentation/homepage/clockin_page/widgets/clockout_bottom_sheet.dart';
 import 'package:suprsync/presentation/homepage/withdrawal/withdrawal_screen.dart';
 
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class ClockInPage extends StatefulWidget {
   const ClockInPage({super.key, required this.id});
   final String id;

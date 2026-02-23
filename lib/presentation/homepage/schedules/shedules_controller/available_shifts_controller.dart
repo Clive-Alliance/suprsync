@@ -5,6 +5,9 @@ import 'package:suprsync/models/shifts_model.dart';
 import 'package:suprsync/models/swap_shift_model.dart';
 import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
 import 'package:suprsync/services/shifts_services.dart';
+import 'package:suprsync/util/persistor/data_persistor.dart';
+
+import '../../../dashboard_screen/auth/controller/auth_controller.dart';
 
 class ShiftController extends GetxController {
   ShiftsServices _shiftsServices = ShiftsServices();
@@ -25,15 +28,16 @@ class ShiftController extends GetxController {
   Rx<bool> filterApplied = false.obs;
   Rx<bool> rangeSelected = false.obs;
 
-  Future fetchAvailableShift() {
+  Future fetchAvailableShift() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _shiftsServices
         .fetchAllShifts(
       _authController.userId.value,
       from.value,
       to.value,
-      _authController.token.value,
+      token,
       isfiltered: filterApplied.value,
     )
         .then((value) {
@@ -61,16 +65,17 @@ class ShiftController extends GetxController {
 
   Future swapShift(
     value,
-  ) {
+  ) async {
     showLoading();
     // shiftId(id);
     print('your shiftId is ${shiftId.value}');
     SwapShiftModel swapShiftModel;
+    String token = await DataPersistor.getAccessToken();
     return _shiftsServices
         .swapshifts(
       shiftId.value,
       value,
-      _authController.token.value,
+      token,
     )
         .then((value) async {
       Get.back();

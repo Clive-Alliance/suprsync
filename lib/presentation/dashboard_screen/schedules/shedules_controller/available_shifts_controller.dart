@@ -5,6 +5,8 @@ import 'package:suprsync/models/shifts_model.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/services/shifts_services.dart';
 
+import '../../../../util/persistor/data_persistor.dart';
+
 class ShiftController extends GetxController {
   final ShiftsServices _shiftsServices = ShiftsServices();
   final RxList<ShiftsModel> _shiftsModel = <ShiftsModel>[].obs;
@@ -75,15 +77,16 @@ class ShiftController extends GetxController {
     filterApplied.value = showUserShiftsOnly;
   }
 
-  Future fetchAllShifts() {
+  Future fetchAllShifts() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _shiftsServices
         .fetchAllShifts(
       _authController.userId.value,
       from.value,
       to.value,
-      _authController.token.value,
+      token,
       isfiltered: false,
     )
         .then((value) {
@@ -105,15 +108,16 @@ class ShiftController extends GetxController {
   }
 
   // Fetch user shifts only - always pass true for isfiltered
-  Future fetchUserShifts() {
+  Future fetchUserShifts() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _shiftsServices
         .fetchUserShifts(
       _authController.userId.value,
       from.value,
       to.value,
-      _authController.token.value,
+      token,
       isfiltered: true, // Always true to get user shifts only
     )
         .then((value) {
@@ -153,15 +157,17 @@ class ShiftController extends GetxController {
 
   Future swapShift(
     value,
-  ) {
+  ) async {
     showLoading();
+    String token = await DataPersistor.getAccessToken();
+
     // shiftId(id);
     print('your shiftId is ${shiftId.value}');
     return _shiftsServices
         .swapshifts(
       shiftId.value,
       value,
-      _authController.token.value,
+      token,
     )
         .then((value) async {
       Get.back();

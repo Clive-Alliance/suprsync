@@ -11,6 +11,8 @@ import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.d
 import 'package:suprsync/presentation/homepage/auth/login_bottom_sheet.dart';
 import 'package:suprsync/presentation/homepage/auth/login_page.dart';
 
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -50,24 +52,12 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 void showLoginBottomSheet(BuildContext context) {
-  // final ValueCallback onValueSelected;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  // AuthController _authController = AuthController();
-  bool isVisible = false;
-
-  Size size = MediaQuery.of(context).size;
   showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: context.colorScheme.secondary,
       context: context,
       builder: (BuildContext context) {
-        return LoginBottomSheet(
-            // emailController: _emailController,
-            // // isVisible: isVisible,
-            // passwordController: _passwordController,
-            // authController: _authController
-            );
+        return LoginBottomSheet();
       });
 }
 

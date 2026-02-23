@@ -11,6 +11,7 @@ class NetworkHelper {
   Future<dynamic> postLogin(String url,
       {Map<String, String>? headers, body, encoding}) async {
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .post(Uri.parse(url),
               body: json.encode(body), headers: headers, encoding: encoding)
@@ -29,7 +30,9 @@ class NetworkHelper {
   }
 
   Future get(String url, {Map<String, String>? headers, body}) async {
+    print(headers);
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .get(Uri.parse(url), headers: headers)
           .then((http.Response response) {
@@ -48,7 +51,10 @@ class NetworkHelper {
 
   Future<dynamic> post(String url,
       {Map<String, String>? headers, body, encoding}) {
+    print(headers);
+
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .post(Uri.parse(url),
               body: json.encode(body), headers: headers, encoding: encoding)
@@ -74,7 +80,10 @@ class NetworkHelper {
 
   Future<dynamic> patch(String url,
       {Map<String, String>? headers, body, encoding}) {
+    print(headers);
+
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .patch(Uri.parse(url),
               body: json.encode(body), headers: headers, encoding: encoding)
@@ -95,6 +104,7 @@ class NetworkHelper {
   Future<dynamic> postForm(Uri url, List<http.MultipartFile> files,
       {Map<String, String>? headers, body, encoding}) async {
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       var request = http.MultipartRequest('POST', url);
       request.headers.addAll(headers!);
       if (body != null) {
@@ -117,6 +127,7 @@ class NetworkHelper {
   Future<dynamic> put(String url,
       {Map<String, String>? headers, body, encoding}) {
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .put(Uri.parse(url),
               body: json.encode(body), headers: headers, encoding: encoding)
@@ -137,6 +148,7 @@ class NetworkHelper {
   Future<dynamic> putForm(Uri url, List<http.MultipartFile> files,
       {Map<String, String>? headers, body, encoding}) async {
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       var request = http.MultipartRequest('PUT', url);
       request.headers.addAll(headers!);
       if (body != null) {
@@ -158,6 +170,7 @@ class NetworkHelper {
 
   Future<dynamic> delete(String url, {Map<String, String>? headers}) {
     try {
+      headers?.addAll({'x-client-env' : 'mobile'});
       return http
           .delete(Uri.parse(url), headers: headers)
           .then((http.Response response) {

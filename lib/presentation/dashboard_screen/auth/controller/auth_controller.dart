@@ -8,6 +8,7 @@ import 'package:suprsync/models/signin_model.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/login_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/homepage.dart';
 import 'package:suprsync/services/auth_service.dart';
+import 'package:suprsync/util/persistor/data_persistor.dart';
 import '../../../../core/utils/shared_preferences.dart';
 
 class AuthController extends GetxController {
@@ -42,26 +43,11 @@ class AuthController extends GetxController {
     //  _userDp(value!.user!.avatar);
   }
 
-  void loadDetails() {
-    read("user").then((value) {
-      if (value == null) {
-        Get.to(() => const LoginScreen());
-      } else if (value['accessToken'] != null) {
-        userAuth(SignInUserModel.fromJson(value));
-        updateUserDetails(value);
-        // _userAuth.value = SignInUserModel.fromJson(value);
-        // saveUserDp(_userAuth.value!.user!.pprefs!.avatar);
-        userId(userAuth.value!.user!.id.toString());
-        Get.to(const HomePage());
-      }
-      // else {
-      //     // userAuth2 = UserModelUseUnverified.fromJson(value);
-      //   }
-      //   // notifyListeners();
-    });
+  void updateToken(String accessToken) {
+    token(accessToken);
   }
 
-  void signIn(email, password) {
+  void signIn(email, password, remember) {
     showLoading();
     _authentication.signIn(email, password).then((value) {
       if (value is SignInUserModel) {
@@ -69,11 +55,31 @@ class AuthController extends GetxController {
         saveDetails("user", value);
         updateUserDetails(value);
         userId(value.user?.id?.toString());
+        DataPersistor.saveAccessToken(token: value.accessToken);
+        DataPersistor.saveRefreshToken(token: remember ? value.refreshToken : null);
+        DataPersistor.saveLoginTime(time: DateTime.now());
         Get.back();
         Get.to(() => const HomePage());
       }
     }).catchError((onError) {
       showSnackBar('An error occurred while trying to login. Please try again later.');
+    });
+  }
+
+
+  void refreshToken(token) {
+    // showLoading();
+    _authentication.refreshToken(token).then((value) {
+      if (value is SignInUserModel) {
+        if(value.accessToken != null) {
+          updateToken(value.accessToken!);
+        }
+        DataPersistor.saveAccessToken(token: value.accessToken);
+        DataPersistor.saveRefreshToken(token: value.refreshToken);
+        DataPersistor.saveLoginTime(time: DateTime.now());
+      }
+    }).catchError((onError) {
+      showSnackBar('An error occurred while trying to refresh token. Please try again later.');
     });
   }
 

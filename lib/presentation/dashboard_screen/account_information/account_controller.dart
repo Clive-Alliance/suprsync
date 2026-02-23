@@ -8,6 +8,8 @@ import 'package:suprsync/models/upload_picture.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/services/profile_services.dart';
 
+import '../../../util/persistor/data_persistor.dart';
+
 class AccountController extends GetxController {
   Rx<File>? _imageFile;
   Rx<String> base64String = ''.obs;
@@ -15,9 +17,11 @@ class AccountController extends GetxController {
 
   AuthController _authController = Get.find();
   AccountServices _accountServices = AccountServices();
-  Future<UploadPictureModel> uploadImage() {
+  Future<UploadPictureModel> uploadImage() async {
+    String token = await DataPersistor.getAccessToken();
+
     return _accountServices
-        .uploadPicture(_authController.token.value, _imageFile)
+        .uploadPicture(token, _imageFile)
         .then((value) {
       UploadPictureModel url = value;
       imageUrl(url.url);

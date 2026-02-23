@@ -14,6 +14,8 @@ import 'package:suprsync/presentation/homepage/schedules/widgets/days_grid.dart'
 import 'package:suprsync/presentation/homepage/schedules/widgets/search_field.dart';
 import 'package:suprsync/presentation/homepage/widgets/swap_cards.dart';
 
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
   @override

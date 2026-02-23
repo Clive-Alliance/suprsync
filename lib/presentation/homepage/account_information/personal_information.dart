@@ -7,6 +7,7 @@ import 'package:suprsync/core/utils/app_button.dart';
 import 'package:suprsync/presentation/homepage/account_information/account_controller.dart';
 import 'package:suprsync/presentation/homepage/account_information/widgets/account_textfield.dart';
 
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
 import '../auth/controller/auth_controller.dart';
 import 'widgets/custom_list_tile.dart';
 

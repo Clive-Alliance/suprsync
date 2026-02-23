@@ -7,6 +7,8 @@ import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.d
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_page.dart';
 import 'package:suprsync/presentation/homepage/schedules/swap_screen.dart';
 
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class SwapCard extends StatelessWidget {
   const SwapCard(
       {super.key,

@@ -12,6 +12,9 @@ import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.d
 import 'package:suprsync/services/calendar_services.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../util/persistor/data_persistor.dart';
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 // class CalendarController extends GetxController {
 //   // Reactive variables
 //   final CalendarServices _calendarServices = CalendarServices();
@@ -116,7 +119,7 @@ import 'package:table_calendar/table_calendar.dart';
 //               .assignedBranchId
 //               .toString(),
 //           formattedDates,
-//           _authController.token.value.toString());
+//           token.toString());
 //       showSnackBar('Days blocked successfully');
 //       Get.back();
 //     } catch (e) {
@@ -128,7 +131,7 @@ import 'package:table_calendar/table_calendar.dart';
 //   Future fetchBlockedDates() async {
 //     _calendarServices
 //         .getBlockedDays(
-//             _authController.userId, _authController.token.value.toString())
+//             _authController.userId, token.toString())
 //         .then((check) {
 //       if (check is UnavailableDaysModel) {
 //         for (UnavailableDay day in check.unavailableDays ?? []) {
@@ -159,7 +162,7 @@ import 'package:table_calendar/table_calendar.dart';
 //     return await _calendarServices
 //         .unblockDays(
 //       formattedDate,
-//       _authController.token.value.toString(),
+//       token.toString(),
 //     )
 //         .then((value) async {
 //       await fetchBlockedDates();
@@ -260,6 +263,8 @@ class CalendarController extends GetxController {
     final List<String> formattedDates =
         newDates.map((date) => DateFormat('yyyy-MM-dd').format(date)).toList();
     showLoading();
+    String token = await DataPersistor.getAccessToken();
+
     return await _calendarServices
         .blockDays(
       _authController.userAuth.value!.activeCompany!.memberships!.first.id
@@ -268,7 +273,7 @@ class CalendarController extends GetxController {
           .userAuth.value!.activeCompany!.memberships!.first.assignedBranchId
           .toString(),
       formattedDates,
-      _authController.token.value.toString(),
+      token.toString(),
     )
         .then((value) {
       hasBeenAdded(true);
@@ -282,11 +287,12 @@ class CalendarController extends GetxController {
   Future<void> unblockDate(DateTime date) async {
     final String formattedDate = DateFormat('yyyy-MM-dd').format(date);
     showLoading();
+    String token = await DataPersistor.getAccessToken();
 
     return await _calendarServices
         .unblockDays(
       formattedDate,
-      _authController.token.value.toString(),
+      token.toString(),
     )
         .then((value) async {
       await fetchBlockedDates();
@@ -306,10 +312,11 @@ class CalendarController extends GetxController {
 
   Future fetchBlockedDates() async {
     todaysDate.value = formatDate(calendarDate);
+    String token = await DataPersistor.getAccessToken();
 
     _calendarServices
         .getBlockedDays(
-            _authController.userId, _authController.token.value.toString())
+            _authController.userId, token.toString())
         .then((check) {
       if (check is UnavailableDaysModel) {
         for (UnavailableDay day in check.unavailableDays ?? []) {
@@ -333,11 +340,13 @@ class CalendarController extends GetxController {
     });
   }
 
-  Future requestTimeOff() {
+  Future requestTimeOff() async {
     showLoading();
+    String token = await DataPersistor.getAccessToken();
+
     return _calendarServices
         .requestUserTimeOff(reason.value, startDate.value, endDate.value,
-            selectedItem.value, _authController.token.value.toString())
+            selectedItem.value, token.toString())
         .then((value) async {
       await fetchRequestedTimeOffs();
       Get.back();
@@ -347,11 +356,13 @@ class CalendarController extends GetxController {
     });
   }
 
-  Future fetchRequestedTimeOffs() {
+  Future fetchRequestedTimeOffs() async {
     // showLoading();
+    String token = await DataPersistor.getAccessToken();
+
     print(' i called this');
     return _calendarServices
-        .getRequestedTimeOffs(_authController.token.value.toString())
+        .getRequestedTimeOffs(token.toString())
         .then((value) {
       requestedTimeoffs.value = value;
       print(requestedTimeoffs.first);

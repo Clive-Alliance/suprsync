@@ -9,6 +9,10 @@ import 'package:suprsync/core/utils/show_snackbar.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/login_bottom_sheet.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/login_page.dart';
+import 'package:suprsync/presentation/dashboard_screen/homepage.dart';
+import 'package:suprsync/util/persistor/data_persistor.dart';
+
+import '../../homepage/auth/login_bottom_sheet.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,13 +21,22 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // AuthController _authController = Get.find();
+  final AuthController _authController = Get.find();
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       // _authController.loadDetails();
-      Get.to(() => const LoginScreen());
+      DataPersistor.getRefreshToken().then((token){
+        if(token.isEmpty){
+          Get.to(() => const LoginScreen());
+        } else {
+          _authController.refreshToken(token);
+          Future.delayed(const Duration(seconds: 2), () {
+            Get.to(() => const HomePage());
+          });
+        }
+      });
     });
   }
 

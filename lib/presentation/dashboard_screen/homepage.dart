@@ -5,6 +5,7 @@ import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/models/signin_model.dart';
 import 'package:suprsync/presentation/controllers/items_controller.dart';
 import 'package:suprsync/presentation/controllers/transfer_controllers.dart';
+import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
@@ -14,6 +15,9 @@ import 'package:suprsync/presentation/dashboard_screen/qr_screen.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/schedule_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
+
+import '../../services/auth_service.dart';
+import '../../util/persistor/data_persistor.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -25,6 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final AuthController _authController = Get.find();
   final PageController _pageController = PageController();
   final CalendarController _calendarController = Get.find();
   final ClockInAndOutController _clockInAndOutController = Get.find();
@@ -35,11 +40,25 @@ class _HomePageState extends State<HomePage> {
   SignInUserModel? userAuth;
 
   int tab = 0;
+
+  void checkToken(){
+    DataPersistor.getLoginTime().then((time){
+      if(DateTime.now().isAfter(time ?? DateTime.now())){
+        DataPersistor.getRefreshToken().then((token){
+          if(token.isNotEmpty) {
+            _authController.refreshToken(token);
+          }
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // _calendarController.fetchBlockedDates();
     // _calendarController.fetchRequestedTimeOffs();
+    // checkToken();
     _shiftController.fetchAllShifts();
     _shiftController.fetchUserShifts();
     _withdrawalController.fetchAvailableLocations();

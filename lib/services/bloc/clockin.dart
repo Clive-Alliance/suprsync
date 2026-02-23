@@ -5,6 +5,7 @@ import '../../bloc/base/base_bloc.dart';
 import '../../models/event_schedule.dart';
 import '../../models/off_day_schedule.dart';
 import '../../presentation/dashboard_screen/auth/controller/auth_controller.dart';
+import '../../util/persistor/data_persistor.dart';
 
 class ClockInBloc extends BaseBloc {
 
@@ -19,11 +20,13 @@ class ClockInBloc extends BaseBloc {
       _shiftScheduleSubject.sink.addError('Invalid date');
       return;
     }
+    String token = await DataPersistor.getAccessToken();
+
     try {
       toggleProgress(true);
       await _repo.shiftSchedule(
         from.toIso8601String(),
-        _authController.token.value,
+        token,
       ).then((response) {
         print(response);
         _shiftScheduleSubject.sink.add(response);
@@ -45,10 +48,12 @@ class ClockInBloc extends BaseBloc {
       return;
     }
     try {
+      String token = await DataPersistor.getAccessToken();
+
       toggleProgress(true);
       await _repo.offDays(
         from.toIso8601String(),
-        _authController.token.value,
+        token,
       ).then((response) {
         _offDaysSubject.sink.add(response);
         toggleProgress(false);

@@ -9,6 +9,8 @@ import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_cont
 import 'package:suprsync/services/location_item_service.dart';
 import 'package:suprsync/services/withdrawal_service.dart';
 
+import '../../../../util/persistor/data_persistor.dart';
+
 class WithdrawalController extends GetxController {
   final LocationServices _locationServices = LocationServices();
   final WithdrawalService _withdrawalService = WithdrawalService();
@@ -128,11 +130,12 @@ class WithdrawalController extends GetxController {
     selectedWithdrawals.refresh();
   }
 
-  Future fetchAvailableLocations() {
+  Future fetchAvailableLocations() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _locationServices
-        .fetchAvailableLocations(_authController.token.value)
+        .fetchAvailableLocations(token)
         .then((value) {
       locationsModel(value);
 
@@ -160,7 +163,7 @@ class WithdrawalController extends GetxController {
 //       .withdrawItems(
 //         _authController.membershipId.value,
 //         withdrawalData, // 👈 pass list
-//         _authController.token.value,
+//         token,
 //       )
 //       .then((value) async {
 //         Get.back();
@@ -172,7 +175,7 @@ class WithdrawalController extends GetxController {
 //       });
 // }
 
-  Future withdrawItem() {
+  Future withdrawItem() async {
     // Validate that all required fields are filled
     for (var withdrawal in selectedWithdrawals) {
       if (withdrawal.quantity == null || withdrawal.quantity! <= 0) {
@@ -200,12 +203,13 @@ class WithdrawalController extends GetxController {
     final withdrawalData = selectedWithdrawals.map((w) => w.toJson()).toList();
 
     print('Final withdrawal data: $withdrawalData');
+    String token = await DataPersistor.getAccessToken();
 
     return _withdrawalService
         .withdrawItems(
       _authController.membershipId.value,
       withdrawalData,
-      _authController.token.value,
+      token,
     )
         .then((value) async {
       Get.back();
@@ -221,11 +225,12 @@ class WithdrawalController extends GetxController {
     });
   }
 
-  Future fetchMeasurementunit() {
+  Future fetchMeasurementunit() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _withdrawalService
-        .fetchMeasumenentUnit(_authController.token.value)
+        .fetchMeasumenentUnit(token)
         .then((value) {
       measurementUnitModel(value);
       isLoading(false);

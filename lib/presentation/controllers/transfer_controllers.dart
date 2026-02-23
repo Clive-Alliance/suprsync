@@ -5,6 +5,7 @@ import 'package:suprsync/models/location_model.dart';
 import 'package:suprsync/models/transfer_request_mdel.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 import 'package:suprsync/services/transfer_service.dart';
+import '../../util/persistor/data_persistor.dart';
 import '../dashboard_screen/auth/controller/auth_controller.dart';
 
 class TransferController extends GetxController {
@@ -30,12 +31,13 @@ class TransferController extends GetxController {
       ];
 
   var isLoading = false.obs;
-  Future requestTransferItemsList() {
+  Future requestTransferItemsList() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _transferService
         .getRequestTransferItems(
-      _authController.token.value,
+      token,
     )
         .then((value) {
       transferRequestModel(value);
@@ -82,14 +84,15 @@ class TransferController extends GetxController {
     specifiedTransferList.assignAll(filtered);
   }
 
-  Future requestSpecifiedTransferItemsList() {
+  Future requestSpecifiedTransferItemsList() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _transferService
         .getLocationTransferItems(
       from.value,
       to.value,
-      _authController.token.value,
+      token,
     )
         .then((value) {
       specifiedTransferList(value);
@@ -103,12 +106,14 @@ class TransferController extends GetxController {
     });
   }
 
-  Future stockItems(TransferRequestModel stockedItem) {
+  Future stockItems(TransferRequestModel stockedItem) async {
     showLoading();
+    String token = await DataPersistor.getAccessToken();
+
     return _transferService
         .stockUpItems(
       stockedItem,
-      _authController.token.value,
+      token,
     )
         .then((value) {
       isLoading(false);

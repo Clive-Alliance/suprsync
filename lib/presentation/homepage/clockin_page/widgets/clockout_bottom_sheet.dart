@@ -6,6 +6,8 @@ import 'package:suprsync/core/utils/app_textfield.dart';
 import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/homepage/clockin_page/clockin_controller.dart';
 
+import '../../../dashboard_screen/auth/controller/auth_controller.dart';
+
 typedef StringCallback = void Function(String);
 
 class ClockoutBottomSheet extends StatefulWidget {

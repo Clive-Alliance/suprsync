@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/app_button.dart';
-import 'auth_page.dart';
+import '../../homepage/auth/auth_page.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});

@@ -7,6 +7,7 @@ import 'package:suprsync/presentation/homepage/account_information/widgets/logou
 import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
 
 import '../../../core/constants/app_images.dart';
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
 import 'widgets/custom_list_tile.dart';
 
 class AccountInformationPage extends StatelessWidget {

@@ -6,6 +6,9 @@ import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.d
 import 'package:suprsync/services/location_item_service.dart';
 import 'package:suprsync/services/withdrawal_service.dart';
 
+import '../../../../util/persistor/data_persistor.dart';
+import '../../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class WithdrawalController extends GetxController {
   LocationServices _locationServices = LocationServices();
   WithdrawalService _withdrawalService = WithdrawalService();
@@ -21,11 +24,12 @@ class WithdrawalController extends GetxController {
 
   Rx<String> value = ''.obs;
 
-  Future fetchAvailableLocatios() {
+  Future fetchAvailableLocatios() async {
     isLoading(true);
+    String token = await DataPersistor.getAccessToken();
 
     return _locationServices
-        .fetchAvailableLocations(_authController.token.value)
+        .fetchAvailableLocations(token)
         .then((value) {
       // Filter the list for valid start dates
 
@@ -37,11 +41,13 @@ class WithdrawalController extends GetxController {
     });
   }
 
-  Future withdrawItem() {
+  Future withdrawItem() async {
     print('called here ${location.value}');
     showLoading();
     // shiftId(id);
     // SwapShiftModel swapShiftModel;
+    String token = await DataPersistor.getAccessToken();
+
     return _withdrawalService
         .withdrawItems(
       _authController.userId.value,
@@ -52,7 +58,7 @@ class WithdrawalController extends GetxController {
         // location.value.toString(),
       ],
 
-      _authController.token.value,
+      token,
     )
         .then((value) async {
       Get.back();

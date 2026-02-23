@@ -13,6 +13,9 @@ import 'package:suprsync/models/error_model.dart';
 import 'package:suprsync/presentation/homepage/auth/controller/auth_controller.dart';
 import 'package:suprsync/services/clock_in_services.dart';
 
+import '../../../util/persistor/data_persistor.dart';
+import '../../dashboard_screen/auth/controller/auth_controller.dart';
+
 class ClockInAndOutController extends GetxService {
   final ClockinServices _clockinServices = ClockinServices();
   Rx<String> swapId = ''.obs;
@@ -86,13 +89,15 @@ class ClockInAndOutController extends GetxService {
     });
   }
 
-  Future getClockInSchedule() {
+  Future getClockInSchedule() async {
+    String token = await DataPersistor.getAccessToken();
+
     return _clockinServices
         .clockInSchedule(
       from.value,
       to.value,
       _authController.userId.value,
-      _authController.token.value,
+      token,
     )
         .then((value) {
       pastScheduleModel(value);
