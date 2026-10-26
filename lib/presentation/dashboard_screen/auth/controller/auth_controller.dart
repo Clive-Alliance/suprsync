@@ -7,6 +7,8 @@ import 'package:suprsync/models/error_model.dart';
 import 'package:suprsync/models/signin_model.dart';
 import 'package:suprsync/presentation/dashboard_screen/auth/login_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/homepage.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_tour_page.dart';
 import 'package:suprsync/services/auth_service.dart';
 import '../../../../core/utils/shared_preferences.dart';
 
@@ -31,27 +33,50 @@ class AuthController extends GetxController {
   // final Rx<String> email = ''.obs;
 
   updateUserDetails(SignInUserModel value) {
-    firstName(value.user!.firstName);
-    lastName(value.user!.lastName);
-    email(value.user!.email);
-    gender(value.user!.gender);
-    token(value.accessToken);
-    membershipId(value.activeCompany!.memberships!.first.id);
-    userDp(value.user!.picture!.url);
-    //  _userDp(value!.user!.avatar);
+    firstName(value.user?.firstName ?? '');
+    lastName(value.user?.lastName ?? '');
+    email(value.user?.email ?? '');
+    gender(value.user?.gender ?? '');
+    token(value.accessToken ?? '');
+    final memberships = value.activeCompany?.memberships;
+    membershipId(
+      memberships != null && memberships.isNotEmpty
+          ? (memberships.first.id ?? '')
+          : '',
+    );
+    userDp(value.user?.picture?.url ?? '');
+  }
+
+  Future<void> _openAfterAuth() async {
+    final shiftSets = Get.find<ShiftSetController>();
+    var hasShiftSet = false;
+    try {
+      hasShiftSet = await shiftSets.loadCurrent(
+        token: token.value,
+        userId: userId.value,
+        companyId: userAuth.value?.activeCompany?.id,
+      );
+    } catch (_) {
+      hasShiftSet = shiftSets.shiftSet.value != null;
+    }
+    if (hasShiftSet) {
+      Get.offAll(() => const HomePage());
+    } else {
+      Get.offAll(() => const ShiftSetTourPage());
+    }
   }
 
   void loadDetails() {
-    read("user").then((value) {
+    read("user").then((value) async {
       if (value == null) {
         Get.to(() => const LoginScreen());
       } else if (value['accessToken'] != null) {
         userAuth(SignInUserModel.fromJson(value));
-        updateUserDetails(value);
+        updateUserDetails(userAuth.value!);
         // _userAuth.value = SignInUserModel.fromJson(value);
         // saveUserDp(_userAuth.value!.user!.pprefs!.avatar);
         userId(userAuth.value!.user!.id.toString());
-        Get.to(const HomePage());
+        await _openAfterAuth();
       }
       // else {
       //     // userAuth2 = UserModelUseUnverified.fromJson(value);
@@ -62,14 +87,14 @@ class AuthController extends GetxController {
 
   void signIn(email, password) {
     showLoading();
-    _authentication.signIn(email, password).then((value) {
+    _authentication.signIn(email, password).then((value) async {
       if (value is SignInUserModel) {
         userAuth(value);
         saveDetails("user", value);
         updateUserDetails(value);
         userId(value.user!.id.toString());
         Get.back();
-        Get.to(() => const HomePage());
+        await _openAfterAuth();
       }
     }).catchError((onError) {
       ErrorModel errorModel = ErrorModel.fromJson(jsonDecode(onError['body']));

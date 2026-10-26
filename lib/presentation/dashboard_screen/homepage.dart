@@ -11,7 +11,9 @@ import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_cont
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/inventory/inventory_screen.dart';
 import 'package:suprsync/presentation/dashboard_screen/qr_screen.dart';
+import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/schedule_page.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 
@@ -47,8 +49,18 @@ class _HomePageState extends State<HomePage> {
     _itemsController.fetchAvailableLocatios();
     _transferController.requestTransferItemsList();
     _clockInAndOutController.getWifiName();
+    _loadShiftSet();
 
     // _shiftController.loadClockedInShifts();
+  }
+
+  void _loadShiftSet() {
+    final auth = Get.find<AuthController>();
+    Get.find<ShiftSetController>().loadCurrent(
+      token: auth.token.value,
+      userId: auth.userId.value,
+      companyId: auth.userAuth.value?.activeCompany?.id,
+    );
   }
 
   @override

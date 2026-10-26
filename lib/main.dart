@@ -10,6 +10,7 @@ import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_cont
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/clockin_page/clockin_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/withdrawal/withdrawal_controller/withdrawal_controller.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
 
   // await FaceCamera.initialize();
   Get.put(AuthController(), permanent: true);
+  Get.put(ShiftSetController(), permanent: true);
   Get.put(ClockInAndOutController(), permanent: true);
   Get.put(ShiftController(), permanent: true);
   Get.put(AccountController(), permanent: true);
