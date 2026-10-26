@@ -6,8 +6,12 @@ import 'package:suprsync/core/constants/app_images.dart';
 import 'package:suprsync/core/constants/extentions/theme_extention.dart';
 import 'package:suprsync/core/utils/date_utils.dart';
 import 'package:suprsync/core/utils/loader.dart';
+import 'package:suprsync/presentation/dashboard_screen/auth/controller/auth_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/calendar/calendar_controller.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/shedules_controller/available_shifts_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_controller.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_days_page.dart';
+import 'package:suprsync/presentation/dashboard_screen/shift_set/shift_set_tour_page.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/widgets/days_grid.dart';
 import 'package:suprsync/presentation/dashboard_screen/schedules/widgets/search_field.dart';
 import 'package:suprsync/presentation/dashboard_screen/widgets/swap_cards.dart';
@@ -47,6 +51,29 @@ class _SchedulePageState extends State<SchedulePage> {
     _calendarController.updateTodaysDate();
   }
 
+  Future<void> _openShiftSet() async {
+    final auth = Get.find<AuthController>();
+    final shiftSets = Get.find<ShiftSetController>();
+    showLoading(text: 'Loading');
+    try {
+      await shiftSets.loadCurrent(
+        token: auth.token.value,
+        userId: auth.userId.value,
+        companyId: auth.userAuth.value?.activeCompany?.id,
+      );
+    } finally {
+      if (Get.isDialogOpen == true) Get.back();
+    }
+
+    final existing = shiftSets.shiftSet.value;
+    if (existing == null) {
+      Get.to(() => const ShiftSetTourPage());
+      return;
+    }
+    shiftSets.prepare(existing.period);
+    Get.to(() => const ShiftSetDaysPage());
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -79,16 +106,36 @@ class _SchedulePageState extends State<SchedulePage> {
                           fontWeight: FontWeight.w600,
                           color: const Color(0xff2C2C2C)),
                     ),
-                    Obx(() {
-                      return IconButton(
-                        icon: _shiftController.filterApplied.value
-                            ? const Icon(Icons.filter_alt)
-                            : const Icon(Icons.filter),
-                        onPressed: () {
-                          _shiftController.toggleFilter();
-                        },
-                      );
-                    })
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: _openShiftSet,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                            child: Text(
+                              'Shift set',
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: const Color(0xff00AD57),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Obx(() {
+                          return IconButton(
+                            icon: _shiftController.filterApplied.value
+                                ? const Icon(Icons.filter_alt)
+                                : const Icon(Icons.filter),
+                            onPressed: () {
+                              _shiftController.toggleFilter();
+                            },
+                          );
+                        }),
+                      ],
+                    ),
                   ],
                 ),
                 const SizedBox(
